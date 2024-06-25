@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>Terra Miristica</title>
+    <link rel="stylesheet" href="./assets/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville&display=swap" rel="stylesheet">
+  </head>
+  <body>
+
+    <div>
+      <h1>Terra Miristica League</h1>
+    </div>
+
+    <div>
+        <p>
+            <a href="./index.html">Back to main page</a>
+        </p>
+    </div>
+
+    <div>
+      <h2>Explanation of rating system</h2>
+    </div>
+
+    <div class="explanation">
+        <p>
+            The rating system is an <a href="https://en.wikipedia.org/wiki/Elo_rating_system",
+                                       target="_blank">Elo rating system</a>.
+        </p>
+        <p>
+            New players begin with a rating of 1000.
+            (The absolute magnitude of the number is arbitrary and meaningless;
+            only the difference between ratings is meaningful.)
+        </p>
+        <p>
+            For rating purposes, a game is treated as a series of head-to-head match-ups
+            between each pair of players.
+        </p>
+        <p>
+            The difference between two players' ratings determines the expected probability
+            of each player winning the head-to-head match-up. This is based on the logistic function as follows:
+        </p>
+    </div>
+    <div class="math-section">
+        <p>
+            <math>
+                <msup><mtext>expected</mtext><mtext>A</mtext></msup><mo>=</mo>
+              <mfrac>
+                <mrow>
+                  <mi>1</mi>
+                </mrow>
+                <mrow>
+                  <mn>1</mn>
+                  <mo>+</mo>
+                    <msup>
+                    <mn>10</mn>
+                        <mn>(RatingB – RatingA)/400</mn>
+                    </msup>
+                </mrow>
+              </mfrac>
+            </math>
+        </p>
+        <p>
+            <math>
+                <msup><mtext>expected</mtext><mtext>B</mtext></msup><mo>=</mo>
+              <mfrac>
+                <mrow>
+                  <mi>1</mi>
+                </mrow>
+                <mrow>
+                  <mn>1</mn>
+                  <mo>+</mo>
+                    <msup>
+                    <mn>10</mn>
+                        <mn>(RatingA – RatingB)/400</mn>
+                    </msup>
+                </mrow>
+              </mfrac>
+            </math>
+        </p>
+    </div>
+    <div class="explanation">
+        <p>For example, if Player A has a rating of 1000 and Player B has a rating of 800,
+            Player A would be expected to win 76% of the time:</p>
+    </div>
+    <div class="math-section">
+        <p>
+            <math>
+                <msup><mtext>expected</mtext><mtext>A</mtext></msup><mo>=</mo>
+              <mfrac>
+                <mrow>
+                  <mi>1</mi>
+                </mrow>
+                <mrow>
+                  <mn>1</mn>
+                  <mo>+</mo>
+                    <msup>
+                    <mn>10</mn>
+                        <mn>–200/400</mn>
+                    </msup>
+                </mrow>
+              </mfrac>
+                <mo>=</mo><mn>0.76</mn>
+            </math>
+        </p>
+        <p>
+            <math>
+                <msup><mtext>expected</mtext><mtext>B</mtext></msup><mo>=</mo>
+              <mfrac>
+                <mrow>
+                  <mi>1</mi>
+                </mrow>
+                <mrow>
+                  <mn>1</mn>
+                  <mo>+</mo>
+                    <msup>
+                    <mn>10</mn>
+                        <mn>200/400</mn>
+                    </msup>
+                </mrow>
+              </mfrac>
+                <mo>=</mo><mn>0.24</mn>
+            </math>
+        </p>
+    </div>
+    <div class="explanation">
+        <p>
+            Results of each head-to-head match-up are recorded in a win-loss
+            fashion: 1 for a win, 0 for a loss, and 0.5 for a tie.
+        </p>
+        <p>
+            The change in rating based on an individual head-to-head match-up is based on the difference
+            between the actual outcome and the expected outcome as well as a K-factor:
+        </p>
+    </div>
+    <div class="math-section">
+            <p>
+                <math>
+                    <mtext>rating change</mtext>
+                    <mo>=</mo>
+                    <mi>K</mi>
+                    <mo>*</mo>
+                    <mtext>(actual result – expected result)</mtext>
+                </math>
+            </p>
+    </div>
+    <div class="explanation">
+        <p>
+            The K-factor is the maximum amount a rating can change from a single match-up. The K-factor is
+            based on the number of games a player has played, as follows:
+        </p>
+    </div>
+    <div class="math-section">
+        <p>
+            <math>
+                <mi>K</mi>
+                <mo>=</mo>
+                <mn>800</mn>
+                <mo>/</mo>
+                <mtext>num_games</mtext>
+            </math>
+        </p>
+        <p>
+            <math>
+                <mtext>(maximum K = 200; minimum K = 32)</mtext>
+            </math>
+        </p>
+    </div>
+    <div class="explanation">
+        <p>
+            The K-factor calculation means that a player's rating will change more rapidly on the basis of results
+            when they have played fewer games, reflecting the greater uncertainty of their rating. This effect tapers
+            off gradually as more games are played until the K-factor reaches the minimum of 32 (reached after playing
+            25 games).
+        </p>
+        <p>
+            For example, if Player A has a rating of 1000 and Player B has a rating of 800
+            (both having played 10 games; K = 800/10 = 80), and Player B beats Player A, the rating changes for that match-up will be:
+        </p>
+    </div>
+    <div class="math-section">
+        <p>
+            <math>
+                <mtext>Player A rating change</mtext>
+                <mo>=</mo>
+                <mi>80</mi>
+                <mo>*</mo>
+                <mtext>(0 – 0.76)</mtext>
+                <mo>=</mo>
+                <mn>–61</mn>
+            </math>
+        </p>
+        <p>
+            <math>
+                <mtext>Player B rating change</mtext>
+                <mo>=</mo>
+                <mi>80</mi>
+                <mo>*</mo>
+                <mtext>(1 – 0.24)</mtext>
+                <mo>=</mo>
+                <mn>61</mn>
+            </math>
+        </p>
+    </div>
+    <div class="explanation">
+        <p>
+            The more unexpected the result (e.g., a much lower rated player winning against a much higher rated
+            player), the larger the rating change. For instance, if Player A beat Player B in the example above
+            (a more expected outcome given their ratings), the rating change would have only been +/– 19 points
+            (80 * 0.24), respectively.
+        </p>
+        <p>
+            After a game, each player's rating is updated simultaneously based on the sum of all the individual
+            head-to-head outcomes in the game. For example, the winning player will be considered to have a
+            head-to-head win against each of the other players in the game and will receive an overall rating increase
+            based on the sum of the individual increases.
+        </p>
+        <p>
+            Full example:
+        </p>
+        <p>
+            Assume a 3-player game with the following players:
+        </p>
+    </div>
+    <div class="math-section">
+        <p>
+            Player A, rating 1150, 12 games played
+        </p>
+        <p>
+            Player B, rating 1025, 9 games played
+        </p>
+        <p>
+            Player C, rating 830, 7 games played
+        </p>
+    </div>
+    <div class="explanation">
+        <p>Actual game outcome: 1st: C, 2nd: A, 3rd: B</p>
+        <p>Calculating the expected outcomes for each match-up:</p>
+    </div>
+    <div class="math-section">
+        <p>
+            <math>
+                <mtext>expected A vs. B</mtext><mo>=</mo>
+              <mfrac>
+                <mrow>
+                  <mi>1</mi>
+                </mrow>
+                <mrow>
+                  <mn>1</mn>
+                  <mo>+</mo>
+                    <msup>
+                    <mn>10</mn>
+                        <mn>(1025 – 1150)/400</mn>
+                    </msup>
+                </mrow>
+              </mfrac>
+                <mo>=</mo>
+                <mn>0.67 (in favour of A)</mn>
+            </math>
+        </p>
+        <p>
+            <math>
+                <mtext>expected A vs. C</mtext><mo>=</mo>
+              <mfrac>
+                <mrow>
+                  <mi>1</mi>
+                </mrow>
+                <mrow>
+                  <mn>1</mn>
+                  <mo>+</mo>
+                    <msup>
+                    <mn>10</mn>
+                        <mn>(830 – 1150)/400</mn>
+                    </msup>
+                </mrow>
+              </mfrac>
+                <mo>=</mo>
+                <mn>0.86 (in favour of A)</mn>
+            </math>
+        </p>
+        <p>
+            <math>
+                <mtext>expected B vs. C</mtext><mo>=</mo>
+              <mfrac>
+                <mrow>
+                  <mi>1</mi>
+                </mrow>
+                <mrow>
+                  <mn>1</mn>
+                  <mo>+</mo>
+                    <msup>
+                    <mn>10</mn>
+                        <mn>(830 – 1025)/400</mn>
+                    </msup>
+                </mrow>
+              </mfrac>
+                <mo>=</mo>
+                <mn>0.75 (in favour of B)</mn>
+            </math>
+        </p>
+    </div>
+    <div class="explanation">
+        <p>Calculating the rating changes for each player:</p>
+    </div>
+    <div class="math-section">
+        <p>
+            <math>
+                <mtext>A total change</mtext>
+                <mo>=</mo>
+                <mtext>(A vs. B change) + (A vs. C change)</mtext>
+            </math>
+        </p>
+        <p>
+            <math>
+                <mtext>A vs. B change</mtext>
+                <mo>=</mo>
+                <mtext>(800 / 12) * (1 – 0.67)</mtext>
+                <mo>=</mo>
+                <mn>22</mn>
+            </math>
+        </p>
+        <p>
+            <math>
+                <mtext>A vs. C change</mtext>
+                <mo>=</mo>
+                <mtext>(800 / 12) * (0 – 0.86)</mtext>
+                <mo>=</mo>
+                <mn>–57</mn>
+            </math>
+        </p>
+        <p>
+            <math>
+                <mtext>A total change</mtext>
+                <mo>=</mo>
+                <mtext>22 + (–57)</mtext>
+                <mo>=</mo>
+                <mn>–35</mn>
+            </math>
+        </p>
+        <p></p>
+        <p>
+            <math>
+                <mtext>B total change</mtext>
+                <mo>=</mo>
+                <mtext>(B vs. A change) + (B vs. C change)</mtext>
+            </math>
+        </p>
+        <p>
+            <math>
+                <mtext>B vs. A change</mtext>
+                <mo>=</mo>
+                <mtext>(800 / 9) * (0 – 0.33)</mtext>
+                <mo>=</mo>
+                <mn>–29</mn>
+            </math>
+        </p>
+        <p>
+            <math>
+                <mtext>B vs. C change</mtext>
+                <mo>=</mo>
+                <mtext>(800 / 9) * (0 – 0.75)</mtext>
+                <mo>=</mo>
+                <mn>–67</mn>
+            </math>
+        </p>
+        <p>
+            <math>
+                <mtext>A total change</mtext>
+                <mo>=</mo>
+                <mtext>–29 + (–67)</mtext>
+                <mo>=</mo>
+                <mn>–96</mn>
+            </math>
+        </p>
+        <p></p>
+        <p>
+            <math>
+                <mtext>C total change</mtext>
+                <mo>=</mo>
+                <mtext>(C vs. A change) + (C vs. B change)</mtext>
+            </math>
+        </p>
+        <p>
+            <math>
+                <mtext>C vs. A change</mtext>
+                <mo>=</mo>
+                <mtext>(800 / 7) * (1 – 0.14)</mtext>
+                <mo>=</mo>
+                <mn>98</mn>
+            </math>
+        </p>
+        <p>
+            <math>
+                <mtext>C vs. B change</mtext>
+                <mo>=</mo>
+                <mtext>(800 / 7) * (1 – 0.25)</mtext>
+                <mo>=</mo>
+                <mn>86</mn>
+            </math>
+        </p>
+        <p>
+            <math>
+                <mtext>A total change</mtext>
+                <mo>=</mo>
+                <mtext>98 + 86</mtext>
+                <mo>=</mo>
+                <mn>184</mn>
+            </math>
+        </p>
+    </div>
+    <div class="explanation">
+        <p>New ratings:</p>
+    </div>
+  <div class="math-section">
+      <p>
+            <math>
+                <mtext>new rating</mtext>
+                <mo>=</mo>
+                <mtext>old rating + total change</mtext>
+            </math>
+        </p>
+        <p>
+            <math>
+                <mtext>Player A new rating</mtext>
+                <mo>=</mo>
+                <mn>1150</mn>
+                <mo>+</mo>
+                <mn>(–35)</mn>
+                <mo>=</mo>
+                <mn>1115</mn>
+            </math>
+        </p>
+        <p>
+            <math>
+                <mtext>Player B new rating</mtext>
+                <mo>=</mo>
+                <mn>1025</mn>
+                <mo>+</mo>
+                <mn>(–96)</mn>
+                <mo>=</mo>
+                <mn>929</mn>
+            </math>
+        </p>
+        <p>
+            <math>
+                <mtext>Player C new rating</mtext>
+                <mo>=</mo>
+                <mn>830</mn>
+                <mo>+</mo>
+                <mn>184</mn>
+                <mo>=</mo>
+                <mn>1014</mn>
+            </math>
+        </p>
+  </div>
+  </body>
+</html>
