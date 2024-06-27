@@ -1,0 +1,80 @@
+{% include "header.html" %}
+
+  <!--Ratings-->
+  <section id="ratings">
+    <div class="container col-6 py-3">
+    <h2 class="text-center">Current Ratings</h2>
+      <table class="table text-center table-borderless">
+        <thead>
+          <tr>
+            <th scope="col">Player</th>
+            <th scope="col">Rating</th>
+            <th scope="col">Games</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Jamie</td>
+            <td>1294</td>
+            <td>12</td>
+          </tr>
+          <tr>
+            <td>Beverly</td>
+            <td>1232</td>
+            <td>16</td>
+          </tr>
+          <tr>
+            <td>Miranda</td>
+            <td>1165</td>
+            <td>18</td>
+          </tr>
+        </tbody>
+      </table>
+   </div>
+  </section>
+
+  <!--Latest Results-->
+    <section id="latest-results">
+      <div class="container col-6 py-3">
+      <h2 class="text-center">Latest Results</h2>
+      <h3>A</h3>
+        <table class="table text-center table-borderless">
+          <thead>
+            <tr>
+              <th scope="col">Player</th>
+              <th scope="col">Faction</th>
+              <th scope="col">Score</th>
+              <th scope="col">New Rating</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Swaraj</td>
+              <td>darklings</td>
+              <td>162</td>
+              <td>1102 (+146)</td>
+            </tr>
+            <tr>
+              <td>Miranda</td>
+              <td>engineers</td>
+              <td>161</td>
+              <td>1165 (+39)</td>
+            </tr>
+            <tr>
+              <td>Jamie</td>
+              <td>swarmlings</td>
+              <td>158</td>
+              <td>1294 (+82)</td>
+            </tr>
+            <tr>
+              <td>David</td>
+              <td>witches</td>
+              <td>128</td>
+              <td>930 (–443)</td>
+            </tr>
+          </tbody>
+        </table>
+     </div>
+    </section>
+
+  {% include "footer.html" %}

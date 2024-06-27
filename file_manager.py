@@ -220,7 +220,7 @@ def generate_index_html():
         recent_results_text += game_text
 
     # Combine text for file
-    with open("index.html", "w") as f:
+    with open("templates/index.html", "w") as f:
         f.write(HTML_HEADER +
                 TITLE + rating_table_text + RATING_EXPLANATION_LINK +
                 LATEST_RESULTS_HEADER + recent_results_text + RESULTS_FOOTER +
