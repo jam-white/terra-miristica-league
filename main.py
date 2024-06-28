@@ -1,7 +1,7 @@
 import datetime as dt
 from flask import Flask, render_template, redirect, url_for, flash
 from flask_bootstrap import Bootstrap5
-from database_manager import db, Player, Faction, Game, GameHistory
+from database_manager import db, Player, Faction, Game, GameHistory, get_player_data, get_latest_results
 from forms import AddPlayerForm, AddFactionForm, AddGameForm
 from constants import STARTING_RATING
 from players import add_player
@@ -24,7 +24,10 @@ with app.app_context():
 # Routes
 @app.route('/')
 def home():
-    return render_template('index.html')
+    player_data = get_player_data(db)
+    latest_results, groups = get_latest_results(db)
+    return render_template('index.html',
+                           player_data=player_data, latest_results=latest_results, groups=groups)
 
 
 @app.route('/results')
