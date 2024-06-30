@@ -64,30 +64,41 @@ def get_player_data(db):
     return player_ratings
 
 
-def get_player_num_games(db, player):
-    """Return the number of games a player has played (int)"""
-    pass
-    # num_games = db.session.query(GameHistory).filter(GameHistory.player == player).count()
-    # return num_games
+def get_num_games(db, players):
+    """Return the number of games each player has played as a dict {player_name(str):num_games(int)}"""
+    num_games_dict = {}
+    for player in players:
+        num_games_dict[player.name] = db.session.query(GameHistory).filter(GameHistory.player == player).count()
+    return num_games_dict
 
 
-def split_results_by_groups(results, groups):
-    """Returns a dictionary with the format of group:list of results for that group"""
-    results_by_groups = {}
-    for group in groups:
-        results_by_groups[group] = [entry for entry in results if entry.game.group == group]
-    return results_by_groups
+def split_results(results, rounds, groups):
+    """Returns a dictionary with the format of {round: {group:[results], ..}}"""
+    split_results_dict = {}
+    for round_ in rounds:
+        round_dict = {}
+        for group in groups:
+            round_dict[group] = [entry for entry in results if
+                                 entry.game.round == int(round_) and entry.game.group == group]
+        split_results_dict[round_] = round_dict
+    return split_results_dict
 
 
 def get_latest_results(db):
-    """Returns results from the latest round's games, split by group, and a sorted list of groups"""
+    """Returns results from the latest round's games, split by group, a sorted list of groups, and the round (str)"""
     latest_round = db.session.execute(func.max(Game.round)).scalar()
     result = db.session.execute(db.select(GameHistory).join(Game).where(Game.round == latest_round))
     latest_game_data = result.scalars().all()
     groups = sorted(list(set([entry.game.group for entry in latest_game_data])))
-    latest_results = split_results_by_groups(latest_game_data, groups)
-    return latest_results, groups
+    latest_results = split_results(latest_game_data, rounds=[str(latest_round)], groups=groups)
+    return latest_results, groups, str(latest_round)
 
 
 def get_all_games(db):
-    pass
+    """Returns results from all games, split by round and group, and a sorted list of rounds and groups"""
+    result = db.session.execute(db.select(GameHistory).join(Game))
+    all_games_data = result.scalars().all()
+    rounds = sorted(list(set([str(entry.game.round) for entry in all_games_data])))
+    groups = sorted(list(set([entry.game.group for entry in all_games_data])))
+    all_games_results =  split_results(all_games_data, rounds=rounds, groups=groups)
+    return all_games_results, rounds, groups

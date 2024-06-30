@@ -1,6 +1,7 @@
 h1 {
     font-family: 'Libre Baskerville', serif;
     text-transform: uppercase;
+    text-shadow: 2px 2px 2px gray;
 }
 
 h2 {
@@ -18,4 +19,5 @@ h3 {
 .hex-bg {
     background-repeat: no-repeat;
     background-image: url("../assets/images/tm_bg.png");
+    background-position: center;
 }

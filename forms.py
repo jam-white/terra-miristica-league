@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, IntegerField, SubmitField
-from wtforms.validators import DataRequired, NumberRange
+from wtforms.validators import DataRequired, Optional, NumberRange
 
 
 class AddPlayerForm(FlaskForm):
@@ -28,18 +28,18 @@ class AddGameForm(FlaskForm):
     p2_faction = StringField("Player 2 Faction", validators=[DataRequired()])
     p2_bid = IntegerField("Player 2 Final Bid", validators=[DataRequired(), NumberRange(0, 40)])
     p2_score = IntegerField("Player 2 Final Score", validators=[DataRequired(), NumberRange(0, 250)])
-    p3 = StringField("Player 3", validators=[DataRequired()])
-    p3_faction = StringField("Player 3 Faction", validators=[DataRequired()])
-    p3_bid = IntegerField("Player 3 Final Bid", validators=[DataRequired(), NumberRange(0, 40)])
-    p3_score = IntegerField("Player 3 Final Score", validators=[DataRequired(), NumberRange(0, 250)])
-    p4 = StringField("Player 4", validators=[DataRequired()])
-    p4_faction = StringField("Player 4 Faction", validators=[DataRequired()])
-    p4_bid = IntegerField("Player 4 Final Bid", validators=[DataRequired(), NumberRange(0, 40)])
-    p4_score = IntegerField("Player 4 Final Score", validators=[DataRequired(), NumberRange(0, 250)])
-    p5 = StringField("Player 5", validators=[DataRequired()])
-    p5_faction = StringField("Player 5 Faction", validators=[DataRequired()])
-    p5_bid = IntegerField("Player 5 Final Bid", validators=[DataRequired(), NumberRange(0, 40)])
-    p5_score = IntegerField("Player 5 Final Score", validators=[DataRequired(), NumberRange(0, 250)])
+    p3 = StringField("Player 3")
+    p3_faction = StringField("Player 3 Faction")
+    p3_bid = IntegerField("Player 3 Final Bid", validators=[Optional(), NumberRange(0, 40)])
+    p3_score = IntegerField("Player 3 Final Score", validators=[Optional(), NumberRange(0, 250)])
+    p4 = StringField("Player 4")
+    p4_faction = StringField("Player 4 Faction")
+    p4_bid = IntegerField("Player 4 Final Bid", validators=[Optional(), NumberRange(0, 40)])
+    p4_score = IntegerField("Player 4 Final Score", validators=[Optional(), NumberRange(0, 250)])
+    p5 = StringField("Player 5")
+    p5_faction = StringField("Player 5 Faction")
+    p5_bid = IntegerField("Player 5 Final Bid", validators=[Optional(), NumberRange(0, 40)])
+    p5_score = IntegerField("Player 5 Final Score", validators=[Optional(), NumberRange(0, 250)])
     submit = SubmitField("Add Game")
 
 

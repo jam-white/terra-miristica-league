@@ -1,0 +1,39 @@
+{% include "header.html" %}
+
+    <div>
+      <h2>Previous results</h2>
+      <p>(reverse chronological order)</p>
+    </div>
+
+    {% for round_num in rounds[::-1] %}
+    <div class="container col-6 py-3">
+        <h3>Round {{ round_num }}</h3>
+        <p>Board: Fire & Ice</p>
+
+        {% for group in groups %}
+          <h3>{{ group.upper() }}</h3>
+            <table class="table text-center table-borderless">
+              <thead>
+                <tr>
+                  <th scope="col">Player</th>
+                  <th scope="col">Faction</th>
+                  <th scope="col">Score</th>
+                  <th scope="col">New Rating</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for result in results[round_num][group] %}
+                <tr>
+                  <td>{{ result.player.name }}</td>
+                  <td style="color:{{result.faction.color}}">{{ result.faction.name }}</td>
+                  <td>{{ result.score }}</td>
+                  <td>{{ result.new_rating }}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+        {% endfor %}
+    </div>
+    {% endfor %}
+
+{% include "footer.html" %}

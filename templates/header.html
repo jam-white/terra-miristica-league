@@ -15,7 +15,7 @@
     <!--Nav Bar-->
     <nav class="navbar navbar-expand-sm bg-body-tertiary fixed-top" style="background-color: #e3f2fd;">
       <div class="container-fluid">
-        <a class="navbar-brand" href="#">
+        <a class="navbar-brand" href="{{ url_for('home') }}">
           <img src="../static/assets/images/tm_logo.png" alt="logo" width="30" height="30">
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -24,10 +24,10 @@
         <div class="collapse navbar-collapse" id="navbarNav">
           <ul class="navbar-nav">
             <li class="nav-item">
-              <a class="nav-link active" aria-current="page" href="#">Ratings</a>
+              <a class="nav-link active" aria-current="page" href="{{ url_for('home') }}">Ratings</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#">Results</a>
+              <a class="nav-link" href="{{ url_for('get_all_results') }}">Results</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="#">TM Resources</a>
@@ -39,7 +39,7 @@
 
     <!--Title-->
     <section id="title">
-    <div class="container-fluid col-xxl-8 text-center py-5">
+    <div class="container-fluid text-center py-5">
       <div class="row bg-image flex-sm-row-reverse align-items-center hex-bg">
         <div class="col-md-4 flex-fill">
           <img src="../static/assets/images/tm_logo.png" class="center-block img-fluid" alt="League logo" loading="lazy">

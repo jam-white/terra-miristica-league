@@ -2,10 +2,10 @@
 
   <!--Ratings-->
   <section id="ratings">
-    <div class="container col-6 py-3">
-    <h2 class="text-center">Current Ratings</h2>
-      <table class="table text-center table-borderless">
-        <thead>
+    <div class="container col-10 col-sm-8 col-lg-6 py-3">
+    <h2 class="text-center pb-3">Current Ratings</h2>
+      <table class="table text-center ">
+        <thead class="table-dark">
           <tr>
             <th scope="col">Player</th>
             <th scope="col">Rating</th>
@@ -17,7 +17,7 @@
             <tr>
               <td>{{ player.name }}</td>
               <td>{{ player.current_rating }}</td>
-              <td>12</td>
+              <td>{{ num_games[player.name] }}</td>
             </tr>
           {% endfor %}
         </tbody>
@@ -44,7 +44,7 @@
                 {% for result in latest_results[group] %}
                 <tr>
                   <td>{{ result.player.name }}</td>
-                  <td>{{ result.faction.name }}</td>
+                  <td style="color:{{result.faction.color}}">{{ result.faction.name }}</td>
                   <td>{{ result.score }}</td>
                   <td>{{ result.new_rating }}</td>
                 </tr>

@@ -252,7 +252,7 @@ def generate_results_html():
         all_results_text += game_text + "\n</div>"
 
     # Combine text for file
-    with open("results.html", "w") as f:
+    with open("templates/results.html", "w") as f:
         f.write(HTML_HEADER + TITLE + RESULTS_PAGE_HEADER +
                 all_results_text +
                 HTML_FOOTER)
