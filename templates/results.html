@@ -8,7 +8,7 @@
     {% for round_num in rounds[::-1] %}
     <div class="container col-6 py-3">
         <h3>Round {{ round_num }}</h3>
-        <p>Board: Fire & Ice</p>
+        <p>Map: {{ results[round_num]["a"][0].game.map }}</p>
 
         {% for group in groups %}
           <h3>{{ group.upper() }}</h3>
