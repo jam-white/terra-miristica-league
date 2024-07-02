@@ -1,0 +1,59 @@
+{% include "header.html" %}
+
+
+    <div class="container col-10 col-sm-8 col-lg-6 py-3">
+    <h2 class="text-center pb-3">Player profile: {{ profile_data["player_name"] }}</h2>
+   </div>
+
+  <!--Game History-->
+  <section id="game-history">
+    <div class="container col-lg-10 py-3">
+    <h2 class="text-center pb-3">Game History</h2>
+      <table class="table text-center table-bordered game-history">
+        <thead class="table-dark">
+          <tr>
+            <th scope="col">BGA ID</th>
+            <th scope="col">Round</th>
+            <th scope="col">Group</th>
+              <th scope="col">Map</th>
+              <th scope="col">1st</th>
+              <th scope="col">2nd</th>
+              <th scope="col">3rd</th>
+              <th scope="col">4th</th>
+              <th scope="col">5th</th>
+              <th scope="col">Rating</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for game_id in game_history %}
+        <tr>
+            <td><a href="https://boardgamearena.com/table?table={{ game_id }}" target="_blank">{{ game_id }}</a></td>
+            <td>{{ game_history[game_id]["round"] }}</td>
+            <td>{{ game_history[game_id]["group"].upper() }}</td>
+            <td>{{ game_history[game_id]["map"].title() }}</td>
+            {% for entry in game_history[game_id]["entries"] %}
+                {% if entry.player.name == profile_data["player_name"] %}
+                    <td style="background-color:rgba({{entry.faction.color}},.5)">{{ entry.player.name }}<br>{{ entry.score }}<br>{{ entry.faction.name }}</td>
+                {% else %}
+                    <td>{{ entry.player.name }}<br>{{ entry.score }}<br>{{ entry.faction.name }}</td>
+                {% endif %}
+            {% endfor %}
+            {% for i in range(5 - game_history[game_id]["num_players"]) %}
+                <td></td>
+            {% endfor %}
+            {% for entry in game_history[game_id]["entries"] %}
+                {% if entry.player.name == profile_data["player_name"] %}
+                    {% if entry.new_rating > entry.old_rating %}
+                    <td>{{ entry.new_rating }}<br>(+{{entry.new_rating - entry.old_rating}})</td>
+                    {% else %}
+                    <td>{{ entry.new_rating }}<br>({{entry.new_rating - entry.old_rating}})</td>
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+        {% endfor %}
+        </tr>
+        </tbody>
+      </table>
+    </div>
+
+  {% include "footer.html" %}

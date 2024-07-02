@@ -2,12 +2,12 @@ import datetime as dt
 from flask import Flask, render_template, redirect, url_for, flash
 from flask_bootstrap import Bootstrap5
 from database_manager import db, Player, Faction, Game, GameHistory
-from database_manager import get_player_data, get_latest_results, get_all_games, get_num_games
+from database_manager import (get_player_data, get_latest_results, get_all_games, get_num_games,
+                              get_player_rating, update_player_rating, get_player, get_player_game_history)
 from forms import AddPlayerForm, AddFactionForm, AddGameForm
 from constants import STARTING_RATING
-from players import add_player
+from elo import calculate_winloss_matrix, calculate_expected_matrix, calculate_new_elos
 from file_manager import get_player_stats
-from games import add_game, recalculate_ratings
 
 
 app = Flask(__name__)
@@ -36,6 +36,17 @@ def home():
 def get_all_results():
     all_results, rounds, groups = get_all_games(db)
     return render_template('results.html', results=all_results, rounds=rounds, groups=groups)
+
+
+@app.route('/profile/<player_name>')
+def get_profile(player_name):
+    player = get_player(db, player_name)
+    profile_data = {
+        "player_name": player_name,
+        "current_rating": player.current_rating
+    }
+    game_history = get_player_game_history(db, player_name)
+    return render_template('profile.html', profile_data=profile_data, game_history=game_history)
 
 
 @app.route('/add-player', methods=["GET", "POST"])
@@ -78,10 +89,12 @@ def add_game():
     if form.validate_on_submit():
         new_game_id = form.bga_id.data
 
+        # Check if game ID exists
         if db.session.execute(db.select(Game).where(Game.bga_id == new_game_id)).scalar():
             flash("Game ID already exists.")
 
         else:
+            # Add to games table
             num_players = form.num_players.data
             new_game = Game(
                 bga_id=new_game_id,
@@ -93,19 +106,31 @@ def add_game():
             db.session.add(new_game)
             db.session.commit()
 
+            # Add to game_history table
+            game_results = []
             for i in range(num_players):
-                player_details = GameHistory(
-                    player=db.session.execute(db.select(Player).where(Player.name == form[f"p{i+1}"].data)).scalar(),
+                player = db.session.execute(db.select(Player).where(Player.name == form[f"p{i+1}"].data)).scalar()
+                entry = GameHistory(
+                    player=player,
                     faction=db.session.execute(db.select(Faction)
                                                .where(Faction.name == form[f"p{i+1}_faction"].data)).scalar(),
                     game=new_game,
                     bid=form[f"p{i+1}_bid"].data,
                     score=form[f"p{i+1}_score"].data,
-                    old_rating=STARTING_RATING,  # TODO: FIX
-                    new_rating=STARTING_RATING,  # TODO: FIX
+                    old_rating=get_player_rating(db, player.name),
+                    new_rating=STARTING_RATING,  # This is just a placeholder.
                     created_at=dt.datetime.now()
                 )
-                db.session.add(player_details)
+                game_results.append(entry)
+
+            # Compute new ratings and update game results
+                num_games = get_num_games(db, [entry.player for entry in game_results])
+                game_results = calculate_new_elos(game_results, num_games)
+
+            # Add updated entries to game_history table and update ratings in players table
+            for entry in game_results:
+                update_player_rating(db, player_name=entry.player.name, new_rating=entry.new_rating)
+                db.session.add(entry)
                 db.session.commit()
 
     return render_template('add-game.html', form=form)

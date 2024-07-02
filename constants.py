@@ -1,1 +1,6 @@
+# ELO related
 STARTING_RATING = 1000
+C = 400
+MIN_K = 32
+MAX_K = 200
+

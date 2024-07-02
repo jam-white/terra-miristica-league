@@ -12,12 +12,17 @@ h3 {
     text-align: center;
 }
 
-.table {
-    font-size: 20px;
-}
-
 .hex-bg {
     background-repeat: no-repeat;
     background-image: url("../assets/images/tm_bg.png");
     background-position: center;
+}
+
+.table {
+    font-size: 20px;
+}
+
+.game-history {
+    font-size: 16px;
+    vertical-align: middle;
 }
