@@ -44,7 +44,7 @@
                 {% for result in latest_results[group] %}
                 <tr>
                   <td>{{ result.player.name }}</td>
-                  <td style="color:{{result.faction.color}}">{{ result.faction.name }}</td>
+                  <td style="color:rgb({{result.faction.color}})">{{ result.faction.name }}</td>
                   <td>{{ result.score }}</td>
                   {% if result.new_rating > result.old_rating %}
                     <td>{{ result.new_rating }} (+{{ result.new_rating - result.old_rating }})</td>

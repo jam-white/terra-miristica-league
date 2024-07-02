@@ -25,7 +25,7 @@
                 {% for result in results[round_num][group] %}
                 <tr>
                   <td>{{ result.player.name }}</td>
-                  <td style="color:{{result.faction.color}}">{{ result.faction.name }}</td>
+                  <td style="color:rgb({{result.faction.color}})">{{ result.faction.name }}</td>
                   <td>{{ result.score }}</td>
                   <td>{{ result.new_rating }}</td>
                 </tr>
