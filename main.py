@@ -26,16 +26,16 @@ with app.app_context():
 @app.route('/')
 def home():
     player_data = get_player_data(db)
-    latest_results, groups, round_ = get_latest_results(db)
+    latest_results = get_latest_results(db)
     num_games = get_num_games(db, player_data)
     return render_template('index.html', player_data=player_data,
-                           latest_results=latest_results[round_], groups=groups, num_games=num_games)
+                           latest_results=latest_results, num_games=num_games)
 
 
 @app.route('/results')
 def get_all_results():
-    all_results, rounds, groups = get_all_games(db)
-    return render_template('results.html', results=all_results, rounds=rounds, groups=groups)
+    all_results = get_all_games(db)
+    return render_template('results.html', results=all_results)
 
 
 @app.route('/profile/<player_name>')

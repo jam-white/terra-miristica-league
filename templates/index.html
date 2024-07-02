@@ -29,7 +29,7 @@
     <section id="latest-results">
       <div class="container col-6 py-3">
       <h2 class="text-center">Latest Results</h2>
-        {% for group in groups %}
+        {% for group in (latest_results.keys() | list | sort) %}
           <h3>{{ group.upper() }}</h3>
             <table class="table text-center table-borderless">
               <thead>
