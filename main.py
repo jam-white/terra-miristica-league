@@ -43,7 +43,8 @@ def get_profile(player_name):
     player = get_player(db, player_name)
     profile_data = {
         "player_name": player_name,
-        "current_rating": player.current_rating
+        "current_rating": player.current_rating,
+        "num_games": get_num_games(db, [player])[player.name]
     }
     game_history = get_player_game_history(db, player_name)
     return render_template('profile.html', profile_data=profile_data, game_history=game_history)

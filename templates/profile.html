@@ -5,6 +5,61 @@
     <h2 class="text-center pb-3">Player profile: {{ profile_data["player_name"] }}</h2>
    </div>
 
+    <!--Highlight cards-->
+    <section id="highlights">
+        <div class="container">
+            <div class="row">
+                <div class="card col-6" style="width: 18rem;">
+                  <div class="card-header border-dark text-center">
+                    RATING
+                  </div>
+                  <ul class="list-group list-group-flush">
+                        <li class="list-group-item">Current rating:  {{ profile_data["current_rating"] }}</li>
+                      {% if profile_data["num_games"] >= 10 %}
+                        <li class="list-group-item">Rating high: 5555 </li>
+                      {% else %}
+                        <li class="list-group-item">Rating high: -- </li>
+                      {% endif %}
+                  </ul>
+                </div>
+
+                <div class="card col-6" style="width: 18rem;">
+                  <div class="card-header border-dark text-center">
+                    GAMES PLAYED
+                  </div>
+                  <ul class="list-group list-group-flush">
+                        <li class="list-group-item">Total Games:  {{ profile_data["num_games"] }}</li>
+                        <li class="list-group-item">A Games: {{ profile_data["num_games"] }}</li>
+                        <li class="list-group-item">B Games: {{ profile_data["num_games"] }}</li>
+                        <li class="list-group-item">C Games: {{ profile_data["num_games"] }} </li>
+                  </ul>
+                </div>
+
+                <div class="card col-6" style="width: 18rem;">
+                  <div class="card-header border-dark text-center">
+                    BIDDING
+                  </div>
+                  <ul class="list-group list-group-flush">
+                        <li class="list-group-item">Bid Average: XX</li>
+                        <li class="list-group-item">Bid aggression rank: XX</li>
+                  </ul>
+                </div>
+
+                <div class="card col-6" style="width: 18rem;">
+                  <div class="card-header border-dark text-center">
+                    FACTION PLAY
+                  </div>
+                  <ul class="list-group list-group-flush">
+                        <li class="list-group-item">Most played faction: XX</li>
+                        <li class="list-group-item">2nd: XX</li>
+                        <li class="list-group-item">3rd: XX</li>
+                  </ul>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
   <!--Game History-->
   <section id="game-history">
     <div class="container col-lg-10 py-3">
@@ -33,9 +88,14 @@
             <td>{{ game_history[game_id]["map"].title() }}</td>
             {% for entry in game_history[game_id]["entries"] %}
                 {% if entry.player.name == profile_data["player_name"] %}
-                    <td style="background-color:rgba({{entry.faction.color}},.5)">{{ entry.player.name }}<br>{{ entry.score }}<br>{{ entry.faction.name }}</td>
+                    <td style="background-color:rgba({{entry.faction.color}},.3)">{{ entry.player.name }}<br>
+                        {{ entry.score }}<br>
+                        <span style="color:rgb({{entry.faction.color}}">{{ entry.faction.name }}</span>
+                    </td>
                 {% else %}
-                    <td>{{ entry.player.name }}<br>{{ entry.score }}<br>{{ entry.faction.name }}</td>
+                    <td>{{ entry.player.name }}<br>{{ entry.score }}<br>
+                        <span style="color:rgb({{entry.faction.color}}">{{ entry.faction.name }}</span>
+                    </td>
                 {% endif %}
             {% endfor %}
             {% for i in range(5 - game_history[game_id]["num_players"]) %}
