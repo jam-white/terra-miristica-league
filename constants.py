@@ -4,3 +4,34 @@ C = 400
 MIN_K = 32
 MAX_K = 200
 
+# add-game Form information
+MAPS = [
+    ("Base Game", "Base Game"),
+    ("Revised Base Game", "Revised Base Game"),
+    ("Fire & Ice", "Fire & Ice"),
+    ("Loon Lakes", "Lakes"),
+    ("Fjords", "Fjords")
+]
+
+FACTIONS = [
+    "Acolytes",
+    "Alchemists",
+    "Auren",
+    "Cultists",
+    "Chaos Magicians",
+    "Darklings",
+    "Dragonlords",
+    "Dwarves",
+    "Engineers",
+    "Fakirs",
+    "Giants",
+    "Halflings",
+    "Ice Maidens",
+    "Mermaids",
+    "Nomads",
+    "Riverwalkers",
+    "Shapeshifters",
+    "Swarmlings",
+    "Witches",
+    "Yetis"
+]

@@ -1,4 +1,3 @@
-import base64
 import datetime as dt
 from flask import Flask, render_template, redirect, url_for, flash, Response
 from flask_bootstrap import Bootstrap5
@@ -8,14 +7,15 @@ from database_manager import (get_player_data, get_latest_round, get_latest_resu
                               get_rating_history)
 from forms import AddPlayerForm, AddFactionForm, AddGameForm
 from constants import STARTING_RATING
-from elo import calculate_winloss_matrix, calculate_expected_matrix, calculate_new_elos
-import matplotlib.pyplot as plt
+from elo import calculate_new_elos
 import numpy as np
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_agg import FigureCanvasAgg
 from io import BytesIO
 from math import floor, ceil
 
+
+# TODO: Method for recalculating elos based on existing database
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = '8BYkEfBA6O6donzWlSihBXox7C0sKR6b'
@@ -116,6 +116,15 @@ def add_faction():
 @app.route('/add-game', methods=["GET", "POST"])
 def add_game():
     form = AddGameForm()
+
+    # Pass dynamic choices for player names
+    player_choices = sorted([(player.name, player.name) for player in get_player_data(db)])
+    form.p1.choices = player_choices
+    form.p2.choices = player_choices
+    form.p3.choices = [("", "")] + player_choices  # Can be null
+    form.p4.choices = [("", "")] + player_choices  # Can be null
+    form.p5.choices = [("", "")] + player_choices  # Can be null
+
     if form.validate_on_submit():
         new_game_id = form.bga_id.data
 

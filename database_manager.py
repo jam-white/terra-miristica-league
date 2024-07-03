@@ -60,8 +60,8 @@ class GameHistory(db.Model):
 def get_player_data(db):
     """Returns player data from the database sorted by rating"""
     result = db.session.execute(db.select(Player).order_by(Player.current_rating.desc()))
-    player_ratings = result.scalars().all()
-    return player_ratings
+    player_data = result.scalars().all()
+    return player_data
 
 
 def get_num_games(db, players):
