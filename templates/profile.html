@@ -56,6 +56,14 @@
                   </ul>
                 </div>
 
+                <div class="card col-8">
+                  <div class="card-header border-dark text-center">
+                    RATING HISTORY
+                  </div>
+                  <img src="{{url_for('get_rating_fig', player_name=profile_data['player_name'])}}"
+                  class="card-img-bottom" alt="rating plot">
+                </div>
+
             </div>
         </div>
     </section>
@@ -63,7 +71,7 @@
   <!--Results Summary-->
 <section id="results-highlights">
 <div class="container col-lg-10 py-3">
-    <h2 class="text-center pb-3">Results Highlights</h2>
+    <h2 class="text-center pb-3">Result Highlights</h2>
       <table class="table text-center table-bordered game-history">
         <thead class="table-dark">
           <tr>

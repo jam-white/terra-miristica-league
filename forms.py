@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, IntegerField, SubmitField
+from wtforms import StringField, IntegerField, SelectField, SubmitField
 from wtforms.validators import DataRequired, Optional, NumberRange
 
 
@@ -18,7 +18,7 @@ class AddGameForm(FlaskForm):
     bga_id = IntegerField("BGA id", validators=[DataRequired()])
     num_players = IntegerField("Number of players", validators=[DataRequired(), NumberRange(2,5)])
     round = IntegerField("Round", validators=[DataRequired()])
-    group = StringField("Group", validators=[DataRequired()])
+    group = SelectField("Group", choices=[("A", "A"), ("B", "B"), ("C", "C")], validators=[DataRequired()])
     map = StringField("Map", validators=[DataRequired()])
     p1 = StringField("Player 1", validators=[DataRequired()])
     p1_faction = StringField("Player 1 Faction", validators=[DataRequired()])

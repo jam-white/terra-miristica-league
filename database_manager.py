@@ -72,9 +72,15 @@ def get_num_games(db, players):
     return num_games_dict
 
 
+def get_latest_round(db):
+    """Returns the round number of the latest round"""
+    latest_round = db.session.execute(func.max(Game.round)).scalar()
+    return latest_round
+
+
 def get_latest_results(db):
     """Returns results from the latest round's game results as a dict {group:[results]}"""
-    latest_round = db.session.execute(func.max(Game.round)).scalar()
+    latest_round = get_latest_round(db)
     latest_round_games = db.session.execute(db.select(Game).where(Game.round == latest_round)
                                             .order_by(Game.group)).scalars().all()
     latest_results = {game.group: game.included for game in latest_round_games}
@@ -117,7 +123,7 @@ def get_player_games(db, player_name):
 
 
 def get_player_game_history(db, player_name):
-    """Returns the game history for a player, sorted by round (reverse play order)"""
+    """Returns the game history dict for a player, sorted by round (reverse play order)"""
     game_history = {}
     game_ids = get_player_games(db, player_name)
     for game_id in game_ids:
@@ -132,3 +138,12 @@ def get_player_game_history(db, player_name):
         game_history[game_id] = game_details
     return game_history
 
+
+def get_rating_history(db, player_name):
+    """Returns a list of tuples, (round_num, rating), for named player, sorted by round num"""
+    player = get_player(db, player_name)
+    player_entries = db.session.execute(db.select(GameHistory)
+                                        .where(GameHistory.player_id == player.id)).scalars().all()
+    rating_history = sorted([(entry.game.round, entry.new_rating) for entry in player_entries])
+    rating_history = [(rating_history[0][0]-1, 1000)] + rating_history
+    return rating_history

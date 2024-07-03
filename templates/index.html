@@ -15,7 +15,7 @@
         <tbody>
           {% for player in player_data %}
             <tr>
-              <td>{{ player.name }}</td>
+              <td><a href="{{url_for('get_profile', player_name=player.name)}}">{{ player.name }}</a></td>
               <td>{{ player.current_rating }}</td>
               <td>{{ num_games[player.name] }}</td>
             </tr>

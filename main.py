@@ -1,13 +1,20 @@
+import base64
 import datetime as dt
-from flask import Flask, render_template, redirect, url_for, flash
+from flask import Flask, render_template, redirect, url_for, flash, Response
 from flask_bootstrap import Bootstrap5
 from database_manager import db, Player, Faction, Game, GameHistory
-from database_manager import (get_player_data, get_latest_results, get_all_games, get_num_games,
-                              get_player_rating, update_player_rating, get_player, get_player_game_history)
+from database_manager import (get_player_data, get_latest_round, get_latest_results, get_all_games, get_num_games,
+                              get_player_rating, update_player_rating, get_player, get_player_game_history,
+                              get_rating_history)
 from forms import AddPlayerForm, AddFactionForm, AddGameForm
 from constants import STARTING_RATING
 from elo import calculate_winloss_matrix, calculate_expected_matrix, calculate_new_elos
-from file_manager import get_player_stats
+import matplotlib.pyplot as plt
+import numpy as np
+from matplotlib.figure import Figure
+from matplotlib.backends.backend_agg import FigureCanvasAgg
+from io import BytesIO
+from math import floor, ceil
 
 
 app = Flask(__name__)
@@ -47,7 +54,29 @@ def get_profile(player_name):
         "num_games": get_num_games(db, [player])[player.name]
     }
     game_history = get_player_game_history(db, player_name)
-    return render_template('profile.html', profile_data=profile_data, game_history=game_history)
+    return render_template('profile.html',
+                           profile_data=profile_data, game_history=game_history)
+
+
+@app.route('/get-rating-plot/<player_name>')
+def get_rating_fig(player_name):
+    rating_history = get_rating_history(db, player_name)
+    round_nums, ratings = zip(*rating_history)
+    highest_rating = max(ratings)
+    lowest_rating = min(ratings)
+
+
+    # Create figure
+    fig = Figure()
+    axis = fig.add_subplot(1, 1, 1)
+    axis.plot(*zip(*rating_history), color="black")
+    axis.set_xticks(np.arange(0, get_latest_round(db) + 1))
+    axis.set_yticks(np.arange((floor(lowest_rating/100)*100-50), (ceil(highest_rating/100)*100+50), 50))
+
+    # Output figure
+    output = BytesIO()
+    FigureCanvasAgg(fig).print_png(output)
+    return Response(output.getvalue(), mimetype="image/png")
 
 
 @app.route('/add-player', methods=["GET", "POST"])
