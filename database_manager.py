@@ -88,10 +88,20 @@ def get_latest_results(db):
 
 
 def get_all_games(db):
-    """Returns results from all games as a nested dict {round: {group: [list of game results]}}"""
-    all_games_data = db.session.execute(db.select(Game).order_by(Game.round.desc(), Game.group)).scalars().all()
-    all_games_results = {game.round: {game.group: game.included} for game in all_games_data}
-    return all_games_results
+    """Returns a list of all games sorted by round (oldest first) and group"""
+    all_games_data = db.session.execute(db.select(Game).order_by(Game.round, Game.group)).scalars().all()
+    return all_games_data
+
+
+def split_results(game_data):
+    """Returns a nest dictionary from a list of games with the format {round_num: {group: entries}}"""
+    results_dict = {}
+    for game in game_data:
+        if game.round in results_dict:
+            results_dict[game.round][game.group] = game.included
+        else:
+            results_dict[game.round] = {game.group: game.included}
+    return results_dict
 
 
 def get_player(db, player_name):

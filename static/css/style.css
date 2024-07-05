@@ -34,3 +34,15 @@ h3 {
 .form-labels {
     font-weight: bold;
 }
+
+.notice {
+    color: dodgerblue;
+    font-weight: bold;
+    font-size: 20px;
+}
+
+.error {
+    color: red;
+    font-weight: bold;
+    font-size: 20px;
+}

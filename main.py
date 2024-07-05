@@ -3,19 +3,16 @@ from flask import Flask, render_template, redirect, url_for, flash, Response
 from flask_bootstrap import Bootstrap5
 from database_manager import db, Player, Faction, Game, GameHistory
 from database_manager import (get_player_data, get_latest_round, get_latest_results, get_all_games, get_num_games,
-                              get_player_rating, update_player_rating, get_player, get_player_game_history,
-                              get_rating_history, get_high_rating)
+                              split_results, get_player_rating, update_player_rating, get_player,
+                              get_player_game_history, get_rating_history, get_high_rating)
 from forms import AddPlayerForm, AddFactionForm, AddGameForm
 from constants import STARTING_RATING, RATING_FIG_YRANGE, HIGH_RATING_THRESHOLD
-from elo import calculate_new_elos
+from elo import calculate_new_elos, recalculate_elos
 import numpy as np
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_agg import FigureCanvasAgg
 from io import BytesIO
-from math import floor, ceil
 
-
-# TODO: Method for recalculating elos based on existing database
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = '8BYkEfBA6O6donzWlSihBXox7C0sKR6b'
@@ -41,7 +38,8 @@ def home():
 
 @app.route('/results')
 def get_all_results():
-    all_results = get_all_games(db)
+    all_games_data = get_all_games(db)
+    all_results = split_results(all_games_data)
     return render_template('results.html', results=all_results)
 
 
@@ -88,6 +86,13 @@ def admin():
     return render_template('admin.html')
 
 
+@app.route('/recalculate')
+def recalculate():
+    recalculate_elos(db)
+    flash("Ratings recalculated!", "notice")
+    return redirect(url_for('admin'))
+
+
 @app.route('/add-player', methods=["GET", "POST"])
 def add_player():
     form = AddPlayerForm()
@@ -95,12 +100,15 @@ def add_player():
         new_name = form.name.data
 
         if db.session.execute(db.select(Player).where(Player.name == new_name)).scalar():
-            flash("Player already exists.")
+            flash("Player already exists!", "error")
+            return redirect(url_for("admin"))
 
         else:
             new_player = Player(name=new_name, current_rating=STARTING_RATING)
             db.session.add(new_player)
             db.session.commit()
+            flash("Player added!", "notice")
+            return redirect(url_for("admin"))
 
     return render_template('add-player.html', form=form)
 
@@ -112,12 +120,15 @@ def add_faction():
         new_name = form.name.data
 
         if db.session.execute(db.select(Faction).where(Faction.name == new_name)).scalar():
-            flash("Faction already exists.")
+            flash("Faction already exists!", "error")
+            return redirect(url_for("admin"))
 
         else:
             new_faction = Faction(name=new_name, color=form.color.data, current_rating=STARTING_RATING)
             db.session.add(new_faction)
             db.session.commit()
+            flash("Faction added!", "notice")
+            return redirect(url_for("admin"))
 
     return render_template('add-faction.html', form=form)
 
@@ -139,7 +150,8 @@ def add_game():
 
         # Check if game ID exists
         if db.session.execute(db.select(Game).where(Game.bga_id == new_game_id)).scalar():
-            flash("Game ID already exists.")
+            flash("Game ID already exists!", "error")
+            return redirect(url_for("admin"))
 
         else:
             # Add to games table
@@ -181,48 +193,11 @@ def add_game():
                 db.session.add(entry)
                 db.session.commit()
 
+            flash("Game added!", "notice")
+            return redirect(url_for("admin"))
+
     return render_template('add-game.html', form=form)
 
 
 if __name__ == "__main__":
     app.run(debug=True)
-
-
-# OLD
-
-# HEADER = "==============================================\n" \
-#          "** Welcome to the Terra Mystica League tracker! **\n"
-#
-# PROMPT = "What would you like to do?\n"\
-#          "-- Type 'stats' to get a list of players and their stats.\n"\
-#          "-- Type 'player' to add a new player.\n"\
-#          "-- Type 'game' to add a new game.\n"\
-#          "-- Type 'recalculate' to recalculate player stats based on games in the database.\n"
-#
-#
-# def run():
-#     # Prompt user for command
-#     response = input(PROMPT).lower()
-#     while response not in ["stats", "game", "player", "recalculate"]:
-#         print("Invalid command.")
-#         response = input(PROMPT).lower()
-#
-#     # Run according to response
-#     if response == "stats":
-#         print(get_player_stats())
-#     elif response == "game":
-#         add_game()
-#     elif response == "player":
-#         new_player = input("Which player do you want to add? ")
-#         add_player(new_player)
-#     elif response == "recalculate":
-#         recalculate_ratings()
-#
-#     # Ask if user wants to do something else
-#     again = input("Do you want to do something else (Y or N)? ").upper()
-#     if (again == "Y") or (again == "YES"):
-#         run()
-#
-#
-# print(HEADER)
-# run()

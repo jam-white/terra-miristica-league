@@ -1,5 +1,6 @@
 import numpy as np
-from constants import C, MIN_K, MAX_K
+from constants import C, MIN_K, MAX_K, STARTING_RATING
+from database_manager import get_player_data, update_player_rating, get_all_games, get_player_rating
 
 
 def calculate_winloss_matrix(game_results):
@@ -34,3 +35,25 @@ def calculate_new_elos(game_results, num_games, k_scale=1):
     for i, entry in enumerate(game_results):
         entry.new_rating = int(entry.old_rating + int(player_rating_changes[i]))
     return game_results
+
+
+def recalculate_elos(db):
+    all_players = get_player_data(db)
+
+    # Return all player ratings to the starting rating and create a num_games dict to iterate
+    num_games = {player.name: 0 for player in all_players}
+    for player in all_players:
+        update_player_rating(db, player.name, STARTING_RATING)
+
+    # Loop through games and calculate new ratings
+    for game in get_all_games(db):
+        game_results = game.included
+        for entry in game_results:
+            entry.old_rating = get_player_rating(db, entry.player.name)
+        game_results = calculate_new_elos(game_results, num_games)
+
+        # Update database and iterate num_games dict
+        for entry in game_results:
+            update_player_rating(db, player_name=entry.player.name, new_rating=entry.new_rating)
+            db.session.commit()
+            num_games[entry.player.name] += 1
