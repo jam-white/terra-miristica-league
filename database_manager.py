@@ -147,3 +147,14 @@ def get_rating_history(db, player_name):
     rating_history = sorted([(entry.game.round, entry.new_rating) for entry in player_entries])
     rating_history = [(rating_history[0][0]-1, 1000)] + rating_history
     return rating_history
+
+
+def get_high_rating(db, player_name, threshold):
+    """Returns highest rating with at least <threshold> games, else '--' if below <threshold> total games"""
+    player = get_player(db, player_name)
+    rating_history = get_rating_history(db, player_name)
+    if len(rating_history) < threshold:
+        return "--"
+    else:
+        high_rating = max(max(rating_history[:-threshold]))
+        return high_rating

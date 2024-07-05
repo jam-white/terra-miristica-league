@@ -11,7 +11,7 @@ class AddPlayerForm(FlaskForm):
 
 class AddFactionForm(FlaskForm):
     name = StringField("Faction Name", validators=[DataRequired()])
-    color = StringField("Faction Color", validators=[DataRequired()])
+    color = StringField("Faction Color (RGB values, e.g. 155, 0, 155)", validators=[DataRequired()])
     submit = SubmitField("Add Faction")
 
 

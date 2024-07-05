@@ -4,6 +4,10 @@ C = 400
 MIN_K = 32
 MAX_K = 200
 
+# Profiles related
+RATING_FIG_YRANGE = (300, 1710, 100)  # (y-min, y-max, increment)
+HIGH_RATING_THRESHOLD = 10
+
 # add-game Form information
 MAPS = [
     ("Base Game", "Base Game"),

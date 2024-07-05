@@ -4,9 +4,9 @@ from flask_bootstrap import Bootstrap5
 from database_manager import db, Player, Faction, Game, GameHistory
 from database_manager import (get_player_data, get_latest_round, get_latest_results, get_all_games, get_num_games,
                               get_player_rating, update_player_rating, get_player, get_player_game_history,
-                              get_rating_history)
+                              get_rating_history, get_high_rating)
 from forms import AddPlayerForm, AddFactionForm, AddGameForm
-from constants import STARTING_RATING
+from constants import STARTING_RATING, RATING_FIG_YRANGE, HIGH_RATING_THRESHOLD
 from elo import calculate_new_elos
 import numpy as np
 from matplotlib.figure import Figure
@@ -51,7 +51,8 @@ def get_profile(player_name):
     profile_data = {
         "player_name": player_name,
         "current_rating": player.current_rating,
-        "num_games": get_num_games(db, [player])[player.name]
+        "num_games": get_num_games(db, [player])[player.name],
+        "high_rating": get_high_rating(db, player_name, HIGH_RATING_THRESHOLD)
     }
     game_history = get_player_game_history(db, player_name)
     return render_template('profile.html',
@@ -71,12 +72,20 @@ def get_rating_fig(player_name):
     axis = fig.add_subplot(1, 1, 1)
     axis.plot(*zip(*rating_history), color="black")
     axis.set_xticks(np.arange(0, get_latest_round(db) + 1))
-    axis.set_yticks(np.arange((floor(lowest_rating/100)*100-50), (ceil(highest_rating/100)*100+50), 50))
+    axis.set_yticks(np.arange(*RATING_FIG_YRANGE))
+    axis.set_xlabel("Round")
+    axis.set_ylabel("Rating")
+    axis.axhline(1000, ls="--", color="gray", linewidth=1)
 
     # Output figure
     output = BytesIO()
     FigureCanvasAgg(fig).print_png(output)
     return Response(output.getvalue(), mimetype="image/png")
+
+
+@app.route('/admin')
+def admin():
+    return render_template('admin.html')
 
 
 @app.route('/add-player', methods=["GET", "POST"])

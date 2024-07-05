@@ -1,0 +1,26 @@
+{% include "header.html" %}
+
+  <div class="container col-12 col-sm-10 col-md-8 col-lg-6 my-1">
+    <div class="p-5 text-center bg-body-tertiary rounded-3">
+      <h2 class="text-body-emphasis">Site Admin</h2>
+
+      <div class="container my-5 mx-auto">
+          <h2 class="text-body-emphasis text-center">Recalculate ratings</h2>
+          <div class="d-grid gap-2 col-6 mx-auto">
+            <button class="btn btn-primary" type="button">Recalculate now</button>
+          </div>
+      </div>
+
+        <div class="container my-5 mx-auto">
+          <h2 class="text-body-emphasis text-center">Add new...</h2>
+          <div class="d-grid gap-2 col-6 mx-auto">
+              <a class="btn btn-primary" href="{{url_for('add_game')}}" role="button">Add game</a>
+              <a class="btn btn-primary" href="{{url_for('add_player')}}" role="button">Add player</a>
+              <a class="btn btn-primary" href="{{url_for('add_faction')}}" role="button">Add faction</a>
+          </div>
+        </div>
+
+    </div>
+ </div>
+
+{% include "footer.html" %}

@@ -7,23 +7,22 @@
 
     <!--Highlight cards-->
     <section id="highlights">
-        <div class="container">
-            <div class="row">
-                <div class="card col-6" style="width: 18rem;">
+        <div class="container col-10">
+
+            <div class="row justify-content-center">
+                <div class="card col-10 col-sm-4">
                   <div class="card-header border-dark text-center">
                     RATING
                   </div>
                   <ul class="list-group list-group-flush">
                         <li class="list-group-item">Current rating:  {{ profile_data["current_rating"] }}</li>
-                      {% if profile_data["num_games"] >= 10 %}
-                        <li class="list-group-item">Rating high: 5555 </li>
-                      {% else %}
-                        <li class="list-group-item">Rating high: -- </li>
-                      {% endif %}
+                        <li class="list-group-item">Highest rating&dagger;:  {{ profile_data["high_rating"] }}
+                            <br>&dagger;(minimum 10 games)
+                        </li>
                   </ul>
                 </div>
 
-                <div class="card col-6" style="width: 18rem;">
+                <div class="card col-10 col-sm-4">
                   <div class="card-header border-dark text-center">
                     GAMES PLAYED
                   </div>
@@ -35,19 +34,9 @@
                   </ul>
                 </div>
 
-                <div class="card col-6" style="width: 18rem;">
+                <div class="card col-10 col-sm-4">
                   <div class="card-header border-dark text-center">
-                    BIDDING
-                  </div>
-                  <ul class="list-group list-group-flush">
-                        <li class="list-group-item">Bid Average: XX</li>
-                        <li class="list-group-item">Bid aggression rank: XX</li>
-                  </ul>
-                </div>
-
-                <div class="card col-6" style="width: 18rem;">
-                  <div class="card-header border-dark text-center">
-                    FACTION PLAY
+                    MOST PLAYED FACTION
                   </div>
                   <ul class="list-group list-group-flush">
                         <li class="list-group-item">Most played faction: XX</li>
@@ -56,12 +45,22 @@
                   </ul>
                 </div>
 
-                <div class="card col-8">
+                <div class="card col-10 col-sm-8">
                   <div class="card-header border-dark text-center">
                     RATING HISTORY
                   </div>
                   <img src="{{url_for('get_rating_fig', player_name=profile_data['player_name'])}}"
                   class="card-img-bottom" alt="rating plot">
+                </div>
+
+                <div class="card col-10 col-sm-4">
+                  <div class="card-header border-dark text-center">
+                    SCORE STATS
+                  </div>
+                  <ul class="list-group list-group-flush">
+                        <li class="list-group-item">Avg final score: XX</li>
+                        <li class="list-group-item">Avg starting points: XX</li>
+                  </ul>
                 </div>
 
             </div>
