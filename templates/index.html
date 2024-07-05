@@ -27,12 +27,14 @@
 
   <!--Latest Results-->
     <section id="latest-results">
-      <div class="container col-6 py-3">
+      <div class="container col-12 py-3">
       <h2 class="text-center">Latest Results</h2>
+        <div class="row justify-content-center">
         {% for group in (latest_results.keys() | list | sort) %}
+          <div class="col-10 col-xs-8 col-md-7 col-xl-4">
           <h3>{{ group.upper() }}</h3>
-            <table class="table text-center table-borderless">
-              <thead>
+            <table class="table text-center result-table">
+                 <thead class="table-dark">
                 <tr>
                   <th scope="col">Player</th>
                   <th scope="col">Faction</th>
@@ -55,7 +57,9 @@
                 {% endfor %}
               </tbody>
             </table>
+            </div>
         {% endfor %}
+        </div>
      </div>
     </section>
 
