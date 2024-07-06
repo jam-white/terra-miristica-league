@@ -12,6 +12,12 @@ h3 {
     text-align: center;
 }
 
+.player-name {
+    font-family: 'Libre Baskerville', serif;
+    font-size: 42px;
+        text-shadow: 1px 1px 1px gray;
+}
+
 .hex-bg {
     background-repeat: no-repeat;
     background-image: url("../assets/images/tm_bg.png");
@@ -52,5 +58,5 @@ h3 {
 }
 
 .faction {
-    width: 100px;
+    width: 125px;
 }

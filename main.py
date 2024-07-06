@@ -1,16 +1,20 @@
 import datetime as dt
 from flask import Flask, render_template, redirect, url_for, flash, Response
 from flask_bootstrap import Bootstrap5
+from flask_login import UserMixin, login_user, LoginManager, current_user, logout_user
+from werkzeug.security import generate_password_hash, check_password_hash
 from database_manager import db, Player, Faction, Game, GameHistory
 from database_manager import (get_player_data, get_latest_round, get_latest_results, get_all_games, get_num_games,
                               split_results, get_player_rating, update_player_rating, get_player,
-                              get_player_game_history, get_rating_history, get_high_rating, get_most_played_faction)
+                              get_player_game_history, get_rating_history, get_high_rating, get_most_played_faction,
+                              get_results_highlights, get_faction_bg_color, get_score_stats)
 from forms import AddPlayerForm, AddFactionForm, AddGameForm
 from constants import STARTING_RATING, RATING_FIG_YRANGE, HIGH_RATING_THRESHOLD
 from elo import calculate_new_elos, recalculate_elos
 import numpy as np
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_agg import FigureCanvasAgg
+
 from io import BytesIO
 
 
@@ -46,14 +50,18 @@ def get_all_results():
 @app.route('/profile/<player_name>')
 def get_profile(player_name):
     player = get_player(db, player_name)
+    game_history = get_player_game_history(db, player_name)
+    most_played_faction = get_most_played_faction(db, player_name)
     profile_data = {
         "player_name": player_name,
         "current_rating": player.current_rating,
         "num_games": get_num_games(db, [player])[player.name],
         "high_rating": get_high_rating(db, player_name, HIGH_RATING_THRESHOLD),
-        "most_played_faction": get_most_played_faction(db, player_name)
+        "results_highlights": get_results_highlights(db, player_name, game_history),
+        "most_played_faction": most_played_faction,
+        "faction_bg_color": get_faction_bg_color(db, most_played_faction),
+        "score_stats": get_score_stats(db, player_name, game_history)
     }
-    game_history = get_player_game_history(db, player_name)
     return render_template('profile.html',
                            profile_data=profile_data, game_history=game_history)
 

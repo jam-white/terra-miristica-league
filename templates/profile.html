@@ -1,9 +1,19 @@
 {% include "header.html" %}
 
 
-    <div class="container col-10 col-sm-8 col-lg-6 py-3">
-    <h2 class="text-center pb-3">Player profile: {{ profile_data["player_name"] }}</h2>
-   </div>
+    <!--Player profile  title-->
+    <section id="player-profile">
+        <div class="container-fluid p-0">
+          <div class="pb-2 pt-3 text-center mb-2 no-gutters"
+               style="background-color: rgba({{profile_data['faction_bg_color']}},0.2)"
+          >
+            <h2 class="text-body-emphasis player-name">{{ profile_data["player_name"] }}</h2>
+            <p class="lead">
+                - Player Profile -
+            </p>
+          </div>
+        </div>
+    </section>
 
     <!--Highlight cards-->
     <section id="highlights">
@@ -16,8 +26,8 @@
                   </div>
                   <ul class="list-group list-group-flush">
                         <li class="list-group-item">Current rating:  {{ profile_data["current_rating"] }}</li>
-                        <li class="list-group-item">Highest rating&dagger;:  {{ profile_data["high_rating"] }}
-                            <br>&dagger;(minimum 10 games)
+                        <li class="list-group-item">Highest rating:  {{ profile_data["high_rating"] }}
+                            <br>(min. 10 games)
                         </li>
                   </ul>
                 </div>
@@ -28,10 +38,39 @@
                   </div>
                   <ul class="list-group list-group-flush">
                         <li class="list-group-item">Total Games:  {{ profile_data["num_games"] }}</li>
-                        <li class="list-group-item">A Games: {{ profile_data["num_games"] }}</li>
-                        <li class="list-group-item">B Games: {{ profile_data["num_games"] }}</li>
-                        <li class="list-group-item">C Games: {{ profile_data["num_games"] }} </li>
+                        <li class="list-group-item">A Games: {{ profile_data["results_highlights"]["A"]["Total"] }}</li>
+                        <li class="list-group-item">B Games: {{ profile_data["results_highlights"]["B"]["Total"] }}</li>
+                        <li class="list-group-item">C Games: {{ profile_data["results_highlights"]["C"]["Total"] }}</li>
                   </ul>
+                </div>
+
+                <div class="card col-10 col-sm-4">
+                  <div class="card-header border-dark text-center">
+                    SCORE STATS
+                  </div>
+                  <ul class="list-group list-group-flush">
+                        <li class="list-group-item">Avg final score:&nbsp;&nbsp;
+                            <span style="float:right">{{profile_data['score_stats']['avg_final_score']}}</span></li>
+                        {% if profile_data['score_stats']['relative_to_game_avg'] > 0 %}
+                            <li class="list-group-item">+/- avg in games played:&nbsp;&nbsp;
+                                <span style="float:right">+{{profile_data['score_stats']['relative_to_game_avg']}}</span></li>
+                        {% else %}
+                            <li class="list-group-item">+/- avg in games played:&nbsp;&nbsp;
+                                <span style="float:right">{{profile_data['score_stats']['relative_to_game_avg']}}</span></li>
+                        {% endif %}
+                        <li class="list-group-item">Avg starting points:&nbsp;&nbsp;
+                            <span style="float:right">{{profile_data['score_stats']['avg_starting_score']}}</span></li>
+                        <li class="list-group-item">Avg points gained:&nbsp;&nbsp;
+                            <span style="float:right">{{profile_data['score_stats']['avg_net_gained']}}</span></li>
+                  </ul>
+                </div>
+
+                <div class="card col-10 col-sm-8">
+                  <div class="card-header border-dark text-center">
+                    RATING HISTORY
+                  </div>
+                  <img src="{{url_for('get_rating_fig', player_name=profile_data['player_name'])}}"
+                  class="card-img-bottom" alt="rating plot">
                 </div>
 
                 <div class="card col-10 col-sm-4 text-center">
@@ -49,31 +88,13 @@
                       </div>
                 </div>
 
-                <div class="card col-10 col-sm-8">
-                  <div class="card-header border-dark text-center">
-                    RATING HISTORY
-                  </div>
-                  <img src="{{url_for('get_rating_fig', player_name=profile_data['player_name'])}}"
-                  class="card-img-bottom" alt="rating plot">
-                </div>
-
-                <div class="card col-10 col-sm-4">
-                  <div class="card-header border-dark text-center">
-                    SCORE STATS
-                  </div>
-                  <ul class="list-group list-group-flush">
-                        <li class="list-group-item">Avg final score: XX</li>
-                        <li class="list-group-item">Avg starting points: XX</li>
-                  </ul>
-                </div>
-
             </div>
         </div>
     </section>
 
   <!--Results Summary-->
 <section id="results-highlights">
-<div class="container col-lg-10 py-3">
+<div class="container col-lg-10 py-5">
     <h2 class="text-center pb-3">Result Highlights</h2>
       <table class="table text-center table-bordered game-history">
         <thead class="table-dark">
@@ -86,21 +107,21 @@
         <tbody>
         <tr>
             <td class="medal">🥇</td>
-            <td>0</td>
-            <td>0</td>
-            <td>0</td>
+            <td>{{ profile_data["results_highlights"]["A"][1] }}</td>
+            <td>{{ profile_data["results_highlights"]["B"][1] }}</td>
+            <td>{{ profile_data["results_highlights"]["C"][1] }}</td>
         </tr>
         <tr>
             <td class="medal">🥈</td>
-            <td>0</td>
-            <td>0</td>
-            <td>0</td>
+            <td>{{ profile_data["results_highlights"]["A"][2] }}</td>
+            <td>{{ profile_data["results_highlights"]["B"][2] }}</td>
+            <td>{{ profile_data["results_highlights"]["C"][2] }}</td>
         </tr>
         <tr>
             <td class="medal">🥉</td>
-            <td>0</td>
-            <td>0</td>
-            <td>0</td>
+            <td>{{ profile_data["results_highlights"]["A"][3] }}</td>
+            <td>{{ profile_data["results_highlights"]["B"][3] }}</td>
+            <td>{{ profile_data["results_highlights"]["C"][3] }}</td>
         </tr>
         </tbody>
       </table>

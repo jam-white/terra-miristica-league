@@ -4,6 +4,7 @@ from typing import List
 from sqlalchemy import Integer, String, DateTime, ForeignKey, func
 from sqlalchemy.orm import relationship, DeclarativeBase, Mapped, mapped_column
 from flask_sqlalchemy import SQLAlchemy
+from statistics import mean
 
 
 # Create database
@@ -169,12 +170,17 @@ def get_high_rating(db, player_name, threshold):
         return high_rating
 
 
-def get_most_played_faction(db, player_name):
-    """Returns a dict with the most played faction and number of times played (multiple if tied)"""
+def get_player_records(db, player_name):
     player = get_player(db, player_name)
-    faction_tally = {}
     player_records = (db.session.execute(db.select(GameHistory).where(GameHistory.player_id == player.id))
                       .scalars().all())
+    return player_records
+
+
+def get_most_played_faction(db, player_name):
+    """Returns a dict with the most played faction and number of times played (multiple if tied)"""
+    faction_tally = {}
+    player_records = get_player_records(db, player_name)
     for record in player_records:
         faction = record.faction.name.replace(" ", "")
         if faction in faction_tally:
@@ -184,3 +190,54 @@ def get_most_played_faction(db, player_name):
     max_value = max(faction_tally.values())
     max_factions = {faction:faction_tally[faction] for faction in faction_tally if faction_tally[faction] == max_value}
     return max_factions
+
+
+def get_results_highlights(db, player_name, game_history):
+    """Returns a dict with player's 1st, 2nd, 3rd placements and total games by group"""
+    groups = db.session.execute(db.select(Game.group).distinct()).scalars().all()
+    result_highlights = {group: {1: 0, 2: 0, 3: 0, "Total": 0} for group in groups}
+    # Loop through games in their history
+    for game_id in list(game_history.keys()):
+        entries = game_history[game_id]["entries"]
+        for entry in entries:
+            if entry.player.name == player_name:
+                # Check if the player was 1st, 2nd, or 3rd
+                if entries.index(entry) < 3:
+                    # Iterate the appropriate total based on the index of the entry and round
+                    result_highlights[entry.game.group][entries.index(entry)+1] += 1
+                # Iterate the round total regardless of placement
+                result_highlights[entry.game.group]["Total"] += 1
+    return result_highlights
+
+
+def get_faction_color(db, faction_name):
+    faction = db.session.execute(db.select(Faction).where(Faction.name == faction_name)).scalar()
+    return faction.color
+
+
+def get_faction_bg_color(db, most_played_dict):
+    if len(list(most_played_dict.keys())) == 1:
+        return get_faction_color(db, list(most_played_dict.keys())[0])
+    else:
+        return "255, 255, 255"
+
+
+def get_score_stats(db, player_name, game_history):
+    player = get_player(db, player_name)
+    player_scores = []
+    player_bids = []
+    game_avg_scores = []
+    for game_id in list(game_history.keys()):
+        entries = game_history[game_id]["entries"]
+        game_avg_scores.append(mean([entry.score for entry in entries]))
+        for entry in entries:
+            if entry.player_id == player.id:
+                player_scores.append(entry.score)
+                player_bids.append(entry.bid)
+    score_stats = {
+        "avg_final_score": round(mean(player_scores), 1),
+        "avg_starting_score": round(mean(player_bids), 1),
+        "avg_net_gained": round(mean([score - bid for score, bid in zip(player_scores, player_bids)]), 1),
+        "relative_to_game_avg": round(mean([score - avg for score, avg in zip(player_scores, game_avg_scores)]), 1)
+    }
+    return score_stats
