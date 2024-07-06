@@ -34,15 +34,19 @@
                   </ul>
                 </div>
 
-                <div class="card col-10 col-sm-4">
-                  <div class="card-header border-dark text-center">
-                    MOST PLAYED FACTION
+                <div class="card col-10 col-sm-4 text-center">
+                  <div class="card-header border-dark">
+                    MOST PLAYED FACTION(S)
                   </div>
-                  <ul class="list-group list-group-flush">
-                        <li class="list-group-item">Most played faction: XX</li>
-                        <li class="list-group-item">2nd: XX</li>
-                        <li class="list-group-item">3rd: XX</li>
-                  </ul>
+                    <div class="card-body text-center">
+                        {% for faction in profile_data["most_played_faction"].keys()|list %}
+                            <img src="../static/assets/images/{{faction}}.png"
+                                alt="faction picture" class="faction rounded-circle">
+                        {% endfor %}
+                    </div>
+                      <div class="card-footer text-body-secondary">
+                        Played in {{ (profile_data["most_played_faction"].values()|list)[0] }} games
+                      </div>
                 </div>
 
                 <div class="card col-10 col-sm-8">

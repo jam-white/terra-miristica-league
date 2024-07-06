@@ -161,10 +161,26 @@ def get_rating_history(db, player_name):
 
 def get_high_rating(db, player_name, threshold):
     """Returns highest rating with at least <threshold> games, else '--' if below <threshold> total games"""
-    player = get_player(db, player_name)
     rating_history = get_rating_history(db, player_name)
     if len(rating_history) < threshold:
         return "--"
     else:
         high_rating = max(max(rating_history[:-threshold]))
         return high_rating
+
+
+def get_most_played_faction(db, player_name):
+    """Returns a dict with the most played faction and number of times played (multiple if tied)"""
+    player = get_player(db, player_name)
+    faction_tally = {}
+    player_records = (db.session.execute(db.select(GameHistory).where(GameHistory.player_id == player.id))
+                      .scalars().all())
+    for record in player_records:
+        faction = record.faction.name.replace(" ", "")
+        if faction in faction_tally:
+            faction_tally[faction] += 1
+        else:
+            faction_tally[faction] = 1
+    max_value = max(faction_tally.values())
+    max_factions = {faction:faction_tally[faction] for faction in faction_tally if faction_tally[faction] == max_value}
+    return max_factions
