@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, IntegerField, SelectField, SubmitField
+from wtforms import StringField, IntegerField, SelectField, SubmitField, PasswordField
 from wtforms.validators import DataRequired, Optional, NumberRange
 from constants import MAPS, FACTIONS
 
@@ -44,4 +44,15 @@ class AddGameForm(FlaskForm):
     submit = SubmitField("Add Game")
 
 
+class RegisterForm(FlaskForm):
+    username = StringField("Username", validators=[DataRequired()], render_kw={"placeholder": "Username"})
+    password = PasswordField("Password", validators=[DataRequired()], render_kw={"placeholder": "Password"})
+    code = PasswordField("Register code (must know to register for this site)",
+                         validators=[DataRequired()], render_kw={"placeholder": "Code"})
+    submit = SubmitField("Register")
 
+
+class LoginForm(FlaskForm):
+    username = StringField("Username", validators=[DataRequired()], render_kw={"placeholder": "Username"})
+    password = PasswordField("Password", validators=[DataRequired()], render_kw={"placeholder": "Password"})
+    submit = SubmitField("Login")

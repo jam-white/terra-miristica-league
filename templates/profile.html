@@ -1,13 +1,13 @@
 {% include "header.html" %}
 
 
-    <!--Player profile  title-->
+    <!--Player profile title-->
     <section id="player-profile">
         <div class="container-fluid p-0">
           <div class="pb-2 pt-3 text-center mb-2 no-gutters"
                style="background-color: rgba({{profile_data['faction_bg_color']}},0.2)"
           >
-            <h2 class="text-body-emphasis player-name">{{ profile_data["player_name"] }}</h2>
+            <h2 class="text-body-emphasis player-profile-name">{{ profile_data["player_name"] }}</h2>
             <p class="lead">
                 - Player Profile -
             </p>
@@ -106,19 +106,19 @@
         </thead>
         <tbody>
         <tr>
-            <td class="medal">🥇</td>
+            <td class="emoji">🥇</td>
             <td>{{ profile_data["results_highlights"]["A"][1] }}</td>
             <td>{{ profile_data["results_highlights"]["B"][1] }}</td>
             <td>{{ profile_data["results_highlights"]["C"][1] }}</td>
         </tr>
         <tr>
-            <td class="medal">🥈</td>
+            <td class="emoji">🥈</td>
             <td>{{ profile_data["results_highlights"]["A"][2] }}</td>
             <td>{{ profile_data["results_highlights"]["B"][2] }}</td>
             <td>{{ profile_data["results_highlights"]["C"][2] }}</td>
         </tr>
         <tr>
-            <td class="medal">🥉</td>
+            <td class="emoji">🥉</td>
             <td>{{ profile_data["results_highlights"]["A"][3] }}</td>
             <td>{{ profile_data["results_highlights"]["B"][3] }}</td>
             <td>{{ profile_data["results_highlights"]["C"][3] }}</td>

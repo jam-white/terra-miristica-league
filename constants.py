@@ -8,6 +8,13 @@ MAX_K = 200
 RATING_FIG_YRANGE = (300, 1710, 100)  # (y-min, y-max, increment)
 HIGH_RATING_THRESHOLD = 10
 
+# Emojis
+EMOJIS = {
+    "A": {1: "🥇", 2: "🥈", 3:"🥉", 4:"⬇️"},
+    "B": {1: "🏆", 2: "⬆️", 3:"⬇️", 4:"⬇️"},
+    "C": {1: "🎉", 2: "⬆️", 3:"⬇️", 4:"💩"}
+}
+
 # add-game Form information
 MAPS = [
     ("Base Game", "Base Game"),

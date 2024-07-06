@@ -1,27 +1,38 @@
 import datetime as dt
 from flask import Flask, render_template, redirect, url_for, flash, Response
 from flask_bootstrap import Bootstrap5
-from flask_login import UserMixin, login_user, LoginManager, current_user, logout_user
+from flask_login import login_user, LoginManager, current_user, logout_user
 from werkzeug.security import generate_password_hash, check_password_hash
-from database_manager import db, Player, Faction, Game, GameHistory
+from database_manager import db, Player, Faction, Game, GameHistory, User
 from database_manager import (get_player_data, get_latest_round, get_latest_results, get_all_games, get_num_games,
                               split_results, get_player_rating, update_player_rating, get_player,
                               get_player_game_history, get_rating_history, get_high_rating, get_most_played_faction,
                               get_results_highlights, get_faction_bg_color, get_score_stats)
-from forms import AddPlayerForm, AddFactionForm, AddGameForm
-from constants import STARTING_RATING, RATING_FIG_YRANGE, HIGH_RATING_THRESHOLD
+from forms import AddPlayerForm, AddFactionForm, AddGameForm, RegisterForm, LoginForm
+from constants import STARTING_RATING, RATING_FIG_YRANGE, HIGH_RATING_THRESHOLD, EMOJIS
 from elo import calculate_new_elos, recalculate_elos
 import numpy as np
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_agg import FigureCanvasAgg
-
+from decorators import admin_required
 from io import BytesIO
 
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = '8BYkEfBA6O6donzWlSihBXox7C0sKR6b'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///tm_data.db'
+register_code = "FakirsFlyForForeverAndEver"
 Bootstrap5(app)
+
+# Configure Flask login
+login_manager = LoginManager()
+login_manager.init_app(app)
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    user = db.session.execute(db.select(User).where(User.id == user_id)).scalar()
+    return user
 
 
 # Prepare database
@@ -37,14 +48,14 @@ def home():
     latest_results = get_latest_results(db)
     num_games = get_num_games(db, player_data)
     return render_template('index.html', player_data=player_data,
-                           latest_results=latest_results, num_games=num_games)
+                           latest_results=latest_results, num_games=num_games, emojis=EMOJIS)
 
 
 @app.route('/results')
 def get_all_results():
     all_games_data = get_all_games(db)
     all_results = split_results(all_games_data)
-    return render_template('results.html', results=all_results)
+    return render_template('results.html', results=all_results, emojis=EMOJIS)
 
 
 @app.route('/profile/<player_name>')
@@ -90,12 +101,66 @@ def get_rating_fig(player_name):
     return Response(output.getvalue(), mimetype="image/png")
 
 
+@app.route('/register', methods=["GET", "POST"])
+def register():
+    form = RegisterForm()
+    if form.validate_on_submit():
+        new_username = form.username.data
+
+        if db.session.execute(db.select(User).where(User.username == new_username)).scalar():
+            flash("Username already exists. Please login.")
+            return redirect(url_for('login'))
+
+        if form.code.data != register_code:
+            flash("Incorrect register code. You must know this to register.")
+            return render_template("register.html", form=form)
+
+        else:
+            password_hashed_and_salted = generate_password_hash(form.password.data, method="pbkdf2", salt_length=8)
+            new_user = User(username=new_username, password=password_hashed_and_salted)
+            db.session.add(new_user)
+            db.session.commit()
+            login_user(new_user)
+            flash("Registration successful!")
+            return redirect(url_for('admin'))
+    return render_template("register.html", form=form)
+
+
+@app.route('/login', methods=["GET", "POST"])
+def login():
+    form = LoginForm()
+    login_username = form.username.data
+    login_password = form.password.data
+
+    if form.validate_on_submit():
+        user = db.session.execute(db.select(User).where(User.email == login_username)).scalar()
+        if not user:
+            flash("Username not found. Please try again.")
+            return render_template("login.html", form=form)
+        elif check_password_hash(user.password, login_password):
+            login_user(user)
+            return redirect(url_for('admin'))
+        else:
+            flash("Password incorrect. Please try again.")
+            return render_template('login.html', form=form)
+
+    return render_template("login.html", form=form)
+
+
+@app.route('/logout')
+def logout():
+    logout_user()
+    return redirect(url_for('home'))
+
+
 @app.route('/admin')
+@admin_required
 def admin():
     return render_template('admin.html')
 
 
 @app.route('/recalculate')
+@admin_required
 def recalculate():
     recalculate_elos(db)
     flash("Ratings recalculated!", "notice")
@@ -103,6 +168,7 @@ def recalculate():
 
 
 @app.route('/add-player', methods=["GET", "POST"])
+@admin_required
 def add_player():
     form = AddPlayerForm()
     if form.validate_on_submit():
@@ -123,6 +189,7 @@ def add_player():
 
 
 @app.route('/add-faction', methods=["GET", "POST"])
+@admin_required
 def add_faction():
     form = AddFactionForm()
     if form.validate_on_submit():
@@ -143,6 +210,7 @@ def add_faction():
 
 
 @app.route('/add-game', methods=["GET", "POST"])
+@admin_required
 def add_game():
     form = AddGameForm()
 

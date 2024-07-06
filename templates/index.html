@@ -5,7 +5,7 @@
     <div class="container col-12 pb-1 pt-3">
     <h2 class="text-center pb-3">Current Ratings</h2>
       <div class="row justify-content-center">
-        <div class="col-10 col-xs-2 col-md-7 col-xl-6">
+        <div class="col-12 col-xs-10 col-md-8 col-lg-6 col-xl-6">
       <table class="table text-center ">
         <thead class="table-dark">
           <tr>
@@ -35,11 +35,12 @@
       <h2 class="text-center">Latest Results</h2>
         <div class="row justify-content-center">
         {% for group in (latest_results.keys() | list | sort) %}
-          <div class="col-10 col-xs-8 col-md-7 col-xl-4">
+          <div class="col-12 col-xs-10 col-md-8 col-xl-4">
           <h3>{{ group.upper() }}</h3>
             <table class="table text-center result-table">
                  <thead class="table-dark">
                 <tr>
+                  <th scope="col"></th>
                   <th scope="col">Player</th>
                   <th scope="col">Faction</th>
                   <th scope="col">Score</th>
@@ -49,9 +50,10 @@
               <tbody>
                 {% for result in latest_results[group] %}
                 <tr>
-                  <td>{{ result.player.name }}</td>
-                  <td style="color:rgb({{result.faction.color}})">{{ result.faction.name }}</td>
-                  <td>{{ result.score }}</td>
+                    <td class="emoji">{{emojis[group][loop.index]}}</td>
+                    <td>{{ result.player.name }}</td>
+                    <td style="color:rgb({{result.faction.color}})">{{ result.faction.name }}</td>
+                    <td>{{ result.score }}</td>
                   {% if result.new_rating > result.old_rating %}
                     <td>{{ result.new_rating }} (+{{ result.new_rating - result.old_rating }})</td>
                   {% else %}

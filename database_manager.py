@@ -5,6 +5,7 @@ from sqlalchemy import Integer, String, DateTime, ForeignKey, func
 from sqlalchemy.orm import relationship, DeclarativeBase, Mapped, mapped_column
 from flask_sqlalchemy import SQLAlchemy
 from statistics import mean
+from flask_login import UserMixin
 
 
 # Create database
@@ -14,6 +15,13 @@ db = SQLAlchemy(model_class=Base)
 
 
 # Database tables
+class User(UserMixin, db.Model):
+    __tablename__ = "users"
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    username: Mapped[str] = mapped_column(String(250), unique=True)
+    password: Mapped[str] = mapped_column(String(250))
+
+
 class Player(db.Model):
     __tablename__ = "player"
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
@@ -56,6 +64,7 @@ class GameHistory(db.Model):
     old_rating: Mapped[int] = mapped_column(Integer, nullable=False)
     new_rating: Mapped[int] = mapped_column(Integer, nullable=False)
     created_at: Mapped[dt.datetime] = mapped_column(DateTime, nullable=False)
+
 
 # Functions for interacting with database
 def get_player_data(db):
