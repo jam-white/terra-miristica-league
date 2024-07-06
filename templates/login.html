@@ -9,6 +9,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville&display=swap" rel="stylesheet">
+      {% from "bootstrap5/form.html" import render_form %}
   </head>
 
   <body>
@@ -49,6 +50,8 @@
           {% endif %}
         {% endwith %}
       <div class="container my-5 mx-auto">
+          {{ render_form(form, novalidate=True, extra_classes='form-labels') }}
+          <!--
           <form method="POST" action="/login">
             <img class="mb-4" src="../static/assets/images/tm_logo.png" alt="" width="150" height="150">
             <h1 class="h3 mb-3 fw-normal">Please sign in</h1>
@@ -63,6 +66,7 @@
              </div>
             {{ form.submit(class_="btn btn-primary w-100 py-2") }}
           </form>
+          -->
       </div>
     </div>
   </div>

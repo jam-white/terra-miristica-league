@@ -133,7 +133,7 @@ def login():
     login_password = form.password.data
 
     if form.validate_on_submit():
-        user = db.session.execute(db.select(User).where(User.email == login_username)).scalar()
+        user = db.session.execute(db.select(User).where(User.username == login_username)).scalar()
         if not user:
             flash("Username not found. Please try again.")
             return render_template("login.html", form=form)
