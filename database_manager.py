@@ -1,11 +1,11 @@
 import datetime as dt
-import pandas as pd
+from statistics import mean
 from typing import List
+
+from flask_login import UserMixin
+from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import Integer, String, DateTime, ForeignKey, func
 from sqlalchemy.orm import relationship, DeclarativeBase, Mapped, mapped_column
-from flask_sqlalchemy import SQLAlchemy
-from statistics import mean
-from flask_login import UserMixin
 
 
 # Create database

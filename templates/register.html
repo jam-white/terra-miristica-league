@@ -51,27 +51,6 @@
         {% endwith %}
       <div class="container my-5 mx-auto">
           {{ render_form(form, novalidate=True, extra_classes='form-labels') }}
-          <!--
-          <form method="post">
-              {{ form.csrf_token() }}
-            <img class="mb-4" src="../static/assets/images/tm_logo.png" alt="" width="150" height="150">
-            <h1 class="h3 mb-3 fw-normal">Registration</h1>
-
-            <div class="form-floating">
-                {{ form.username(class_="form-control", size=32) }}
-                {{ form.username.label }}
-            </div>
-            <div class="form-floating">
-                {{ form.password(class_="form-control", size=32) }}
-                {{ form.password.label }}
-             </div>
-            <div class="form-floating mb-3">
-                {{ form.code(class_="form-control", size=32) }}
-                {{ form.code.label }}
-             </div>
-            {{ form.submit(class_="btn btn-primary w-100 py-2") }}
-          </form>
-          -->
       </div>
     </div>
   </div>

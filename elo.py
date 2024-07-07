@@ -1,4 +1,5 @@
 import numpy as np
+
 from constants import C, MIN_K, MAX_K, STARTING_RATING
 from database_manager import get_player_data, update_player_rating, get_all_games, get_player_rating
 

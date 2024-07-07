@@ -1,21 +1,24 @@
 import datetime as dt
+from io import BytesIO
+
 from flask import Flask, render_template, redirect, url_for, flash, Response
 from flask_bootstrap import Bootstrap5
 from flask_login import login_user, LoginManager, current_user, logout_user
 from werkzeug.security import generate_password_hash, check_password_hash
+
+from matplotlib.figure import Figure
+from matplotlib.backends.backend_agg import FigureCanvasAgg
+import numpy as np
+
+from constants import STARTING_RATING, RATING_FIG_YRANGE, HIGH_RATING_THRESHOLD, EMOJIS
 from database_manager import db, Player, Faction, Game, GameHistory, User
 from database_manager import (get_player_data, get_latest_round, get_latest_results, get_all_games, get_num_games,
                               split_results, get_player_rating, update_player_rating, get_player,
                               get_player_game_history, get_rating_history, get_high_rating, get_most_played_faction,
                               get_results_highlights, get_faction_bg_color, get_score_stats)
-from forms import AddPlayerForm, AddFactionForm, AddGameForm, RegisterForm, LoginForm
-from constants import STARTING_RATING, RATING_FIG_YRANGE, HIGH_RATING_THRESHOLD, EMOJIS
-from elo import calculate_new_elos, recalculate_elos
-import numpy as np
-from matplotlib.figure import Figure
-from matplotlib.backends.backend_agg import FigureCanvasAgg
 from decorators import admin_required
-from io import BytesIO
+from elo import calculate_new_elos, recalculate_elos
+from forms import AddPlayerForm, AddFactionForm, AddGameForm, RegisterForm, LoginForm
 
 
 app = Flask(__name__)
