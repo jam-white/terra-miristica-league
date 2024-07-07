@@ -1,5 +1,6 @@
 import datetime as dt
 from io import BytesIO
+import os
 
 from flask import Flask, render_template, redirect, url_for, flash, Response
 from flask_bootstrap import Bootstrap5
@@ -22,9 +23,9 @@ from forms import AddPlayerForm, AddFactionForm, AddGameForm, RegisterForm, Logi
 
 
 app = Flask(__name__)
-app.config["SECRET_KEY"] = '8BYkEfBA6O6donzWlSihBXox7C0sKR6b'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///tm_data.db'
-register_code = "FakirsFlyForForeverAndEver"
+app.config["SECRET_KEY"] = os.environ.get("FLASK_KEY")
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("DB_URI")
+register_code = os.environ.get("REGISTER_CODE")
 Bootstrap5(app)
 
 # Configure Flask login
@@ -283,4 +284,4 @@ def add_game():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=False)
