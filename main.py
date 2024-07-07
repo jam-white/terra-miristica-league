@@ -24,7 +24,7 @@ from forms import AddPlayerForm, AddFactionForm, AddGameForm, RegisterForm, Logi
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = os.environ.get("FLASK_KEY")
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("DB_URI")
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("DB_URI", "sqlite:///tm_data.db")
 register_code = os.environ.get("REGISTER_CODE")
 Bootstrap5(app)
 

@@ -175,7 +175,7 @@ def get_high_rating(db, player_name, threshold):
     if len(rating_history) < threshold:
         return "--"
     else:
-        high_rating = max(max(rating_history[:-threshold]))
+        high_rating = max([rating for round_num, rating in rating_history[threshold:]])
         return high_rating
 
 
