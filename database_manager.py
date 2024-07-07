@@ -228,7 +228,7 @@ def get_faction_bg_color(db, most_played_dict):
     if len(list(most_played_dict.keys())) == 1:
         return get_faction_color(db, list(most_played_dict.keys())[0])
     else:
-        return "255, 255, 255"
+        return "220, 226, 230"
 
 
 def get_score_stats(db, player_name, game_history):

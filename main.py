@@ -81,8 +81,6 @@ def get_profile(player_name):
 def get_rating_fig(player_name):
     rating_history = get_rating_history(db, player_name)
     round_nums, ratings = zip(*rating_history)
-    highest_rating = max(ratings)
-    lowest_rating = min(ratings)
 
 
     # Create figure
@@ -99,6 +97,11 @@ def get_rating_fig(player_name):
     output = BytesIO()
     FigureCanvasAgg(fig).print_png(output)
     return Response(output.getvalue(), mimetype="image/png")
+
+
+@app.route('/rating-system')
+def rating_system():
+    return render_template('rating-system.html')
 
 
 @app.route('/register', methods=["GET", "POST"])
@@ -135,13 +138,13 @@ def login():
     if form.validate_on_submit():
         user = db.session.execute(db.select(User).where(User.username == login_username)).scalar()
         if not user:
-            flash("Username not found. Please try again.")
+            flash("Username not found. Please try again.", "error")
             return render_template("login.html", form=form)
         elif check_password_hash(user.password, login_password):
             login_user(user)
             return redirect(url_for('admin'))
         else:
-            flash("Password incorrect. Please try again.")
+            flash("Password incorrect. Please try again.", "error")
             return render_template('login.html', form=form)
 
     return render_template("login.html", form=form)

@@ -1,30 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <title>Terra Miristica</title>
-    <link rel="stylesheet" href="./assets/style.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville&display=swap" rel="stylesheet">
-  </head>
-  <body>
+{% include "header.html" %}
 
-    <div>
-      <h1>Terra Miristica League</h1>
-    </div>
-
-    <div>
-        <p>
-            <a href="./index.html">Back to main page</a>
-        </p>
-    </div>
-
-    <div>
+<div class="container">
+  <div>
       <h2>Explanation of rating system</h2>
     </div>
 
-    <div class="explanation">
+    <div>
         <p>
             The rating system is an <a href="https://en.wikipedia.org/wiki/Elo_rating_system",
                                        target="_blank">Elo rating system</a>.
@@ -455,5 +436,6 @@
             </math>
         </p>
   </div>
-  </body>
-</html>
+</div>
+
+  {% include "footer.html" %}
