@@ -16,7 +16,7 @@ from database_manager import db, Player, Faction, Game, GameHistory, User
 from database_manager import (get_player_data, get_latest_round, get_latest_results, get_all_games, get_num_games,
                               split_results, get_player_rating, update_player_rating, get_player,
                               get_player_game_history, get_rating_history, get_high_rating, get_most_played_faction,
-                              get_results_highlights, get_faction_bg_color, get_score_stats)
+                              get_results_highlights, get_faction_bg_color, get_score_stats, get_head_to_head)
 from decorators import admin_required
 from elo import calculate_new_elos, recalculate_elos
 from forms import AddPlayerForm, AddFactionForm, AddGameForm, RegisterForm, LoginForm
@@ -75,7 +75,8 @@ def get_profile(player_name):
         "results_highlights": get_results_highlights(db, player_name, game_history),
         "most_played_faction": most_played_faction,
         "faction_bg_color": get_faction_bg_color(db, most_played_faction),
-        "score_stats": get_score_stats(db, player_name, game_history)
+        "score_stats": get_score_stats(db, player_name, game_history),
+        "head_to_head": get_head_to_head(db, player_name)
     }
     return render_template('profile.html',
                            profile_data=profile_data, game_history=game_history)

@@ -73,7 +73,6 @@
                   <img src="{{url_for('get_rating_fig', player_name=profile_data['player_name'])}}"
                   class="card-img-bottom" alt="rating plot">
                 </div>
-<!-- faction_color=rgba({{profile_data['faction_bg_color']}},0.2) -->
 
                 <div class="card col-10 col-sm-4 text-center px-0">
                   <div class="card-header border-dark"
@@ -131,6 +130,37 @@
       </table>
     </div>
 </section>
+
+  <!--Head to Head-->
+  <section id="head-to-head">
+    <div class="container col-12 pb-3">
+    <h2 class="text-center pb-3">Head-to-Head Record</h2>
+      <div class="row justify-content-center">
+        <div class="col-12 col-xs-10 col-md-8 col-lg-6 col-xl-6">
+      <table class="table text-center ">
+        <thead class="table-dark">
+          <tr>
+            <th scope="col">Vs. Player</th>
+            <th scope="col">Win - Loss - Draw</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for other_player, record in profile_data["head_to_head"].items() | list | sort(attribute=1, reverse=True) %}
+            <tr>
+              <td>{{ other_player }}</td>
+              <td>
+                  {{record[0]}} -
+                  {{record[1]}} -
+                  {{record[2]}}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+        </div>
+      </div>
+   </div>
+  </section>
 
   <!--Game History-->
   <section id="game-history">

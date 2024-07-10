@@ -250,3 +250,24 @@ def get_score_stats(db, player_name, game_history):
         "relative_to_game_avg": round(mean([score - avg for score, avg in zip(player_scores, game_avg_scores)]), 1)
     }
     return score_stats
+
+
+def get_head_to_head(db, player_name):
+    """Returns a dict with results vs each other player as a tuple, (W, L, D)"""
+    head_to_head = {}
+    this_player = get_player(db, player_name)
+    for player in get_player_data(db):
+        if player != this_player:
+            head_to_head[player.name] = [0, 0, 0]
+    for game_id in get_player_games(db, player_name):
+        game = db.session.execute(db.select(Game).where(Game.bga_id == game_id)).scalar()
+        player_score = [entry.score for entry in game.included if entry.player_id == this_player.id][0]
+        other_players = [entry for entry in game.included if entry.player_id != this_player.id]
+        for player_entry in other_players:
+            if player_score > player_entry.score:
+                head_to_head[player_entry.player.name][0] += 1
+            elif player_score < player_entry.score:
+                head_to_head[player_entry.player.name][1] += 1
+            else:
+                head_to_head[player_entry.player.name][2] += 1
+    return head_to_head
