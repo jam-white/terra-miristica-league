@@ -71,3 +71,12 @@ h3 {
 .math-section {
     text-indent: 5%;
 }
+
+.head-to-head {
+    font-size: 16px;
+    vertical-align: middle;
+}
+
+.head-to-head tbody > tr:last-child > td {
+  border-bottom: 0;
+}
