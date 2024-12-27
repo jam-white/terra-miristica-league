@@ -172,7 +172,7 @@ def get_rating_history(db, player_name):
 def get_high_rating(db, player_name, threshold):
     """Returns highest rating with at least <threshold> games, else '--' if below <threshold> total games"""
     rating_history = get_rating_history(db, player_name)
-    if len(rating_history) < threshold:
+    if len(rating_history)-1 < threshold:  # -1 because the first is the starting rating at game 0
         return "--"
     else:
         high_rating = max([rating for round_num, rating in rating_history[threshold:]])
