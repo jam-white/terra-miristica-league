@@ -226,7 +226,11 @@ def get_faction_color(db, faction_name):
 
 def get_faction_bg_color(db, most_played_dict):
     if len(list(most_played_dict.keys())) == 1:
-        return get_faction_color(db, list(most_played_dict.keys())[0])
+        faction = list(most_played_dict.keys())[0]
+        # TODO: Rework this so the following adjustment isn't necessary
+        if faction in ["ChaosMagicians", "IceMaidens"]:
+            faction = faction.replace("M", " M")
+        return get_faction_color(db, faction)
     else:
         return "220, 226, 230"
 
