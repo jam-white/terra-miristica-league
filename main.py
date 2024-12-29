@@ -16,7 +16,8 @@ from database_manager import db, Player, Faction, Game, GameHistory, User
 from database_manager import (get_player_data, get_latest_round, get_latest_results, get_all_games, get_num_games,
                               split_results, get_player_rating, update_player_rating, get_player,
                               get_player_game_history, get_rating_history, get_high_rating, get_most_played_faction,
-                              get_results_highlights, get_faction_bg_color, get_score_stats, get_head_to_head)
+                              get_results_highlights, get_faction_bg_color, get_score_stats, get_head_to_head,
+                              get_col_spans)
 from decorators import admin_required
 from elo import calculate_new_elos, recalculate_elos
 from forms import AddPlayerForm, AddFactionForm, AddGameForm, RegisterForm, LoginForm
@@ -66,6 +67,7 @@ def get_all_results():
 def get_profile(player_name):
     player = get_player(db, player_name)
     game_history = get_player_game_history(db, player_name)
+    col_spans = get_col_spans(game_history)
     most_played_faction = get_most_played_faction(db, player_name)
     profile_data = {
         "player_name": player_name,
@@ -79,7 +81,7 @@ def get_profile(player_name):
         "head_to_head": get_head_to_head(db, player_name)
     }
     return render_template('profile.html',
-                           profile_data=profile_data, game_history=game_history)
+                           profile_data=profile_data, game_history=game_history, col_spans=col_spans)
 
 
 @app.route('/get-rating-plot/<player_name>')

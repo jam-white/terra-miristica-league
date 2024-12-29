@@ -275,3 +275,18 @@ def get_head_to_head(db, player_name):
             else:
                 head_to_head[player_entry.player.name][2] += 1
     return head_to_head
+
+
+def get_col_spans(game_history):
+    """Returns a dict of {game_id:col_spans} for the player game history table taking into account ties"""
+    col_spans_dict = {}
+    for game_id in game_history:
+        game = game_history[game_id]
+        col_spans = [1] * game["num_players"]
+        for i in reversed(range(game["num_players"])):
+            if i > 0:
+                if game["entries"][i].score == game["entries"][i-1].score:
+                    col_spans[i-1] += col_spans[i]
+                    col_spans[i] = 0
+        col_spans_dict[game_id] = col_spans
+    return col_spans_dict

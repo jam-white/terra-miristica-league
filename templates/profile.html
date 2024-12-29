@@ -183,27 +183,62 @@
         </thead>
         <tbody>
         {% for game_id in game_history %}
+        {% set game = game_history[game_id] %}
         <tr>
             <td><a href="https://boardgamearena.com/table?table={{ game_id }}" target="_blank">{{ game_id }}</a></td>
-            <td>{{ game_history[game_id]["round"] }}</td>
-            <td>{{ game_history[game_id]["group"].upper() }}</td>
-            <td>{{ game_history[game_id]["map"].title() }}</td>
-            {% for entry in game_history[game_id]["entries"] %}
-                {% if entry.player.name == profile_data["player_name"] %}
-                    <td style="background-color:rgba({{entry.faction.color}},.3)">{{ entry.player.name }}<br>
+            <td>{{ game["round"] }}</td>
+            <td>{{ game["group"].upper() }}</td>
+            <td>{{ game["map"].title() }}</td>
+            <!-- Player info for each player -->
+            {% for entry in game["entries"] %}
+                {% if col_spans[game_id][loop.index0] > 0 %}
+
+                    <!-- In cases of ties -->
+                    {% if col_spans[game_id][loop.index0] > 1 %}
+                        <!-- Add bg colour if it is the profile player's result -->
+                        {% set tied_players = {} %}
+                        {% for i in range(loop.index0, loop.index0+col_spans[game_id][loop.index0]) %}
+                            {% set x=tied_players.__setitem__(game["entries"][i].player.name, game["entries"][i].faction.color) %}
+                        {% endfor %}
+                        {% if profile_data["player_name"] in tied_players %}
+                            <td colspan="{{col_spans[game_id][loop.index0]}}"
+                                style="background-color:rgb({{tied_players[profile_data['player_name']]}}, .3)">
+
+                        {% else %}
+                            <td colspan="{{col_spans[game_id][loop.index0]}}">
+                        {% endif %}
+                        <!-- Add names and factions for all the tied players -->
+                        {% for i in range(loop.index0, loop.index0+col_spans[game_id][loop.index0]) %}
+                            {{ game["entries"][i].player.name }}
+                            (<span style="color:rgb({{game['entries'][i].faction.color}}">
+                                {{ game["entries"][i].faction.name }}</span>&nbsp;)
+                            <br>
+                        {% endfor %}
+                            {{ entry.score }}
+
+                    <!-- Cases not involving ties -->
+                    {% else %}
+                        <!-- Add bg colour if it is the profile player's result -->
+                        {% if entry.player.name == profile_data["player_name"] %}
+                            <td style="background-color:rgba({{entry.faction.color}},.3)">
+                        {% else %}
+                            <td>
+                        {% endif %}
+                        {{ entry.player.name }}<br>
                         {{ entry.score }}<br>
                         <span style="color:rgb({{entry.faction.color}}">{{ entry.faction.name }}</span>
-                    </td>
-                {% else %}
-                    <td>{{ entry.player.name }}<br>{{ entry.score }}<br>
-                        <span style="color:rgb({{entry.faction.color}}">{{ entry.faction.name }}</span>
-                    </td>
+                    {% endif %}
+
+                        </td>
                 {% endif %}
             {% endfor %}
-            {% for i in range(5 - game_history[game_id]["num_players"]) %}
+
+            <!-- Fill in missing player cells -->
+            {% for i in range(5 - game["num_players"]) %}
                 <td></td>
             {% endfor %}
-            {% for entry in game_history[game_id]["entries"] %}
+            <!-- New rating and rating +/- -->
+            {% for entry in game["entries"] %}
                 {% if entry.player.name == profile_data["player_name"] %}
                     {% if entry.new_rating > entry.old_rating %}
                     <td>{{ entry.new_rating }}<br>(+{{entry.new_rating - entry.old_rating}})</td>
